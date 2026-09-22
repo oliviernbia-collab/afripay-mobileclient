@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, View } from 'react-native';
 import ScreenContainer from '../../components/ScreenContainer';
-import Input from '../../components/Input';
-import GradientButton from '../../components/GradientButton';
 import ErrorBanner from '../../components/ErrorBanner';
+import PinDots from '../../components/PinDots';
+import PinKeypad from '../../components/PinKeypad';
 import { setClientPin } from '../../api/auth';
 import { colors } from '../../theme/colors';
+
+const PIN_LENGTH = 4;
 
 // Shown right after registration, and reachable again from Paramètres to
 // change the PIN. `mode: 'change'` (from Paramètres) makes it go back
@@ -13,24 +15,16 @@ import { colors } from '../../theme/colors';
 // params) so React Navigation can persist/restore state without warning.
 export default function PinSetupScreen({ navigation, route }) {
   const isChange = route?.params?.mode === 'change';
+  const [stage, setStage] = useState('enter'); // 'enter' | 'confirm'
+  const [firstPin, setFirstPin] = useState('');
   const [pin, setPin] = useState('');
-  const [confirmation, setConfirmation] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const onSubmit = async () => {
-    setError('');
-    if (!/^\d{4,6}$/.test(pin)) {
-      setError('Le code PIN doit contenir 4 à 6 chiffres.');
-      return;
-    }
-    if (pin !== confirmation) {
-      setError('Les codes PIN ne correspondent pas.');
-      return;
-    }
+  const submit = async (confirmedPin) => {
     setLoading(true);
     try {
-      await setClientPin(pin);
+      await setClientPin(confirmedPin);
       if (isChange) {
         navigation.goBack();
       } else {
@@ -38,42 +32,72 @@ export default function PinSetupScreen({ navigation, route }) {
       }
     } catch (e) {
       setError(e.message || 'Impossible d’enregistrer le PIN.');
+      setStage('enter');
+      setFirstPin('');
+      setPin('');
     } finally {
       setLoading(false);
     }
   };
 
+  const onDigit = (d) => {
+    if (loading || pin.length >= PIN_LENGTH) return;
+    setError('');
+    const next = pin + d;
+    setPin(next);
+    if (next.length === PIN_LENGTH) {
+      if (stage === 'enter') {
+        setTimeout(() => {
+          setFirstPin(next);
+          setStage('confirm');
+          setPin('');
+        }, 150);
+      } else {
+        if (next === firstPin) {
+          submit(next);
+        } else {
+          setTimeout(() => {
+            setError('Les codes PIN ne correspondent pas. Recommencez.');
+            setStage('enter');
+            setFirstPin('');
+            setPin('');
+          }, 150);
+        }
+      }
+    }
+  };
+
+  const onBackspace = () => {
+    if (loading) return;
+    setPin((p) => p.slice(0, -1));
+  };
+
   return (
     <ScreenContainer>
-      <Text style={styles.title}>{isChange ? 'Modifier votre PIN' : 'Créez votre code PIN'}</Text>
+      <Text style={styles.title}>
+        {isChange
+          ? 'Modifier votre PIN'
+          : stage === 'enter'
+          ? 'Créez votre code PIN'
+          : 'Confirmez votre code PIN'}
+      </Text>
       <Text style={styles.subtitle}>
-        Ce code (4 à 6 chiffres) vous sera demandé pour confirmer les transferts de 50 000 FCFA ou plus.
+        {stage === 'enter'
+          ? 'Ce code à 4 chiffres vous sera demandé pour confirmer les transferts de 50 000 FCFA ou plus.'
+          : 'Saisissez à nouveau le même code pour le confirmer.'}
       </Text>
       <ErrorBanner message={error} />
-      <Input
-        label="Nouveau PIN"
-        placeholder="••••"
-        keyboardType="number-pad"
-        secureTextEntry
-        maxLength={6}
-        value={pin}
-        onChangeText={setPin}
-      />
-      <Input
-        label="Confirmer le PIN"
-        placeholder="••••"
-        keyboardType="number-pad"
-        secureTextEntry
-        maxLength={6}
-        value={confirmation}
-        onChangeText={setConfirmation}
-      />
-      <GradientButton title="Enregistrer" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+
+      <PinDots length={pin.length} minSlots={PIN_LENGTH} />
+
+      <View style={{ marginTop: 20 }}>
+        <PinKeypad onDigit={onDigit} onBackspace={onBackspace} disabled={loading} />
+      </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { color: colors.white, fontSize: 22, fontWeight: '700', marginTop: 30, marginBottom: 10 },
-  subtitle: { color: colors.textSecondary, marginBottom: 20, lineHeight: 20 },
+  title: { color: colors.white, fontSize: 22, fontWeight: '700', marginTop: 30, marginBottom: 10, textAlign: 'center' },
+  subtitle: { color: colors.textSecondary, marginBottom: 10, lineHeight: 20, textAlign: 'center' },
 });

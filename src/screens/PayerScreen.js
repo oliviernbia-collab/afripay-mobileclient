@@ -2,13 +2,14 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
 import Card from '../components/Card';
 import GradientButton from '../components/GradientButton';
 import Icon from '../components/Icon';
 import { getMyPalmCode } from '../api/biometrie';
 import { getMyWallet } from '../api/wallet';
-import { colors } from '../theme/colors';
+import { colors, brandGradientFull } from '../theme/colors';
 import { formatFcfa } from '../utils/format';
 import { ApiError } from '../api/client';
 
@@ -68,12 +69,20 @@ export default function PayerScreen({ navigation }) {
           </Card>
         ) : (
           <>
-            <Card style={styles.qrCard}>
-              {palmCode ? (
-                <QRCode value={palmCode} size={230} backgroundColor="white" color={colors.black} />
-              ) : null}
-              <Text style={styles.codeLabel}>{palmCode}</Text>
-            </Card>
+            <LinearGradient
+              colors={brandGradientFull}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.scanRing}
+            >
+              <View style={styles.scanRingInner}>
+                {palmCode ? (
+                  <QRCode value={palmCode} size={190} backgroundColor="white" color={colors.black} />
+                ) : null}
+                <Text style={styles.codeLabel}>{palmCode}</Text>
+              </View>
+            </LinearGradient>
+            <Text style={styles.scanHint}>Présentez votre paume pour payer</Text>
 
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -106,8 +115,24 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     paddingHorizontal: 10,
   },
-  qrCard: { alignItems: 'center', paddingVertical: 28, width: '100%' },
-  codeLabel: { color: colors.textSecondary, marginTop: 16, fontSize: 13, letterSpacing: 1 },
+  scanRing: {
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  scanRingInner: {
+    flex: 1,
+    width: '100%',
+    borderRadius: 120,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scanHint: { color: colors.textSecondary, fontSize: 13, marginTop: 16, fontWeight: '600' },
+  codeLabel: { color: colors.textSecondary, marginTop: 10, fontSize: 12, letterSpacing: 1 },
   balanceCard: { width: '100%', marginTop: 20, alignItems: 'center' },
   balanceLabel: { color: colors.textSecondary, fontSize: 13 },
   balanceValue: { color: colors.white, fontSize: 26, fontWeight: '800', marginTop: 6 },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, StyleSheet, ScrollView } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import Input from '../components/Input';
 import GradientButton from '../components/GradientButton';
@@ -59,57 +59,55 @@ export default function TransferScreen({ navigation }) {
 
   return (
     <ScreenContainer scroll>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Transférer</Text>
-        <ErrorBanner message={error} />
+      <Text style={styles.title}>Transférer</Text>
+      <ErrorBanner message={error} />
 
-        {success ? (
-          <Card style={styles.successCard}>
-            <Text style={styles.successTitle}>Transfert envoyé</Text>
-            <Text style={styles.successText}>{formatFcfa(success.montant)} — réf. {success.reference}</Text>
-          </Card>
-        ) : null}
+      {success ? (
+        <Card style={styles.successCard}>
+          <Text style={styles.successTitle}>Transfert envoyé</Text>
+          <Text style={styles.successText}>{formatFcfa(success.montant)} — réf. {success.reference}</Text>
+        </Card>
+      ) : null}
 
-        <Input
-          label="Numéro AfriPay du destinataire"
-          placeholder="Ex: 0102030405"
-          keyboardType="phone-pad"
-          value={telephoneDestinataire}
-          onChangeText={setTelephoneDestinataire}
-        />
-        <Input
-          label="Montant (FCFA)"
-          placeholder="Ex: 2000"
-          keyboardType="number-pad"
-          value={montant}
-          onChangeText={setMontant}
-        />
-        <Input
-          label="Note (optionnelle)"
-          placeholder="Ex: Pour le loyer"
-          value={libelle}
-          onChangeText={setLibelle}
-        />
+      <Input
+        label="Numéro AfriPay du destinataire"
+        placeholder="Ex: 0102030405"
+        keyboardType="phone-pad"
+        value={telephoneDestinataire}
+        onChangeText={setTelephoneDestinataire}
+      />
+      <Input
+        label="Montant (FCFA)"
+        placeholder="Ex: 2000"
+        keyboardType="number-pad"
+        value={montant}
+        onChangeText={setMontant}
+      />
+      <Input
+        label="Note (optionnelle)"
+        placeholder="Ex: Pour le loyer"
+        value={libelle}
+        onChangeText={setLibelle}
+      />
 
-        {needsPin ? (
-          <>
-            <Text style={styles.pinNote}>
-              Ce montant nécessite votre code PIN AfriPay (obligatoire à partir de {formatFcfa(PIN_THRESHOLD)}).
-            </Text>
-            <Input
-              label="Code PIN"
-              placeholder="••••"
-              keyboardType="number-pad"
-              secureTextEntry
-              maxLength={6}
-              value={pin}
-              onChangeText={setPin}
-            />
-          </>
-        ) : null}
+      {needsPin ? (
+        <>
+          <Text style={styles.pinNote}>
+            Ce montant nécessite votre code PIN AfriPay (obligatoire à partir de {formatFcfa(PIN_THRESHOLD)}).
+          </Text>
+          <Input
+            label="Code PIN"
+            placeholder="••••"
+            keyboardType="number-pad"
+            secureTextEntry
+            maxLength={6}
+            value={pin}
+            onChangeText={setPin}
+          />
+        </>
+      ) : null}
 
-        <GradientButton title="Envoyer" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
-      </ScrollView>
+      <GradientButton title="Envoyer" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
     </ScreenContainer>
   );
 }

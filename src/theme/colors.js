@@ -57,12 +57,12 @@ export const kycStatusLabel = (statut) => {
 };
 
 export const providerBrand = {
-  wave: { label: 'Wave', color: '#1DC8E3' },
-  orange_money: { label: 'Orange Money', color: '#F7941D' },
-  moov_money: { label: 'Moov Money', color: '#27AAE1' },
-  mtn_money: { label: 'MTN MoMo', color: '#FFC20E' },
-  djamo: { label: 'Djamo', color: '#7C3AED' },
-  visa: { label: 'Carte Visa', color: '#1A1F71' },
+  wave: { label: 'Wave', color: '#1DC8E3', icon: 'droplet' },
+  orange_money: { label: 'Orange Money', color: '#F7941D', icon: 'mobile-screen' },
+  moov_money: { label: 'Moov Money', color: '#27AAE1', icon: 'tower-cell' },
+  mtn_money: { label: 'MTN MoMo', color: '#FFC20E', icon: 'sim-card' },
+  djamo: { label: 'Djamo', color: '#7C3AED', icon: 'wallet' },
+  visa: { label: 'Carte Visa', color: '#1A1F71', icon: 'credit-card' },
 };
 
 export const txMethodLabel = (m) => {

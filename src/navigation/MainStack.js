@@ -11,6 +11,7 @@ import KycHomeScreen from '../screens/kyc/KycHomeScreen';
 import KycInfoScreen from '../screens/kyc/KycInfoScreen';
 import KycDocumentScreen from '../screens/kyc/KycDocumentScreen';
 import KycEnrollScreen from '../screens/kyc/KycEnrollScreen';
+import AppareilsConnectesScreen from '../screens/AppareilsConnectesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,7 @@ export default function MainStack() {
       <Stack.Screen name="KycInfo" component={KycInfoScreen} options={{ title: '' }} />
       <Stack.Screen name="KycDocument" component={KycDocumentScreen} options={{ title: '' }} />
       <Stack.Screen name="KycEnroll" component={KycEnrollScreen} options={{ title: '' }} />
+      <Stack.Screen name="AppareilsConnectes" component={AppareilsConnectesScreen} options={{ title: '' }} />
     </Stack.Navigator>
   );
 }

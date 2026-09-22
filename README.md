@@ -79,7 +79,7 @@ l'interface, toujours libellé "Scan de paiement AfriPay".
   — voir `ICON_MIGRATION.md` à la racine du repo pour le mapping sémantique partagé entre les 3 apps.
 - Palette et typographie conformes à `DESIGN_TOKENS.md` (fond noir/anthracite, dégradé de marque sur les
   boutons principaux, logo officiel `assets/logo-main.png` / `assets/logo-compact.png`, redimensionné depuis
-  `assets/Logo-AfriPay.png` à la racine du repo).
+  `assets/logo.png` à la racine du repo).
 
 ## Vérifications effectuées
 

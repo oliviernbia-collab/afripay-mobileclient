@@ -26,7 +26,7 @@ export default function BrandHeader({ size = 'large', showTagline = true, style 
         resizeMode="contain"
         accessibilityLabel="AfriPay"
       />
-      {showTagline ? <Text style={styles.tagline}>Créer. Partager. Gagner.</Text> : null}
+      {showTagline ? <Text style={styles.tagline}>Payez. Envoyez. Progressez.</Text> : null}
     </View>
   );
 }

@@ -5,6 +5,7 @@ import { colors } from '../theme/colors';
 import SplashScreen from '../screens/SplashScreen';
 import AuthStack from './AuthStack';
 import MainStack from './MainStack';
+import AppLockGate from '../components/AppLockGate';
 
 const navTheme = {
   ...DarkTheme,
@@ -27,5 +28,15 @@ export default function RootNavigator() {
 
   if (booting) return <SplashScreen />;
 
-  return <NavigationContainer theme={navTheme}>{user ? <MainStack /> : <AuthStack />}</NavigationContainer>;
+  return (
+    <NavigationContainer theme={navTheme}>
+      {user ? (
+        <AppLockGate>
+          <MainStack />
+        </AppLockGate>
+      ) : (
+        <AuthStack />
+      )}
+    </NavigationContainer>
+  );
 }

@@ -1,16 +1,18 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, RefreshControl, Pressable } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import BrandHeader from '../components/BrandHeader';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import StatusBadge from '../components/StatusBadge';
+import TxTypeIcon from '../components/TxTypeIcon';
+import { useAuth } from '../context/AuthContext';
 import { getMyWallet, getMyHistory } from '../api/wallet';
 import { getKycStatus } from '../api/kyc';
 import { getBiometricStatus } from '../api/biometrie';
 import { colors, kycStatusColor, kycStatusLabel, statutColor, txTypeLabel } from '../theme/colors';
 import { formatFcfa, formatDate } from '../utils/format';
+import { SERVER_ORIGIN } from '../config/api';
 
 const QUICK_ACTIONS = [
   { key: 'Recharge', label: 'Recharger', color: colors.orange, icon: 'plus' },
@@ -20,12 +22,14 @@ const QUICK_ACTIONS = [
 ];
 
 export default function DashboardScreen({ navigation }) {
+  const { user } = useAuth();
   const [wallet, setWallet] = useState(null);
   const [kyc, setKyc] = useState(null);
   const [enrolled, setEnrolled] = useState(null);
   const [recent, setRecent] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [balanceHidden, setBalanceHidden] = useState(false);
 
   const load = useCallback(async () => {
     setError('');
@@ -66,7 +70,17 @@ export default function DashboardScreen({ navigation }) {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
       >
         <View style={styles.header}>
-          <BrandHeader size="compact" showTagline={false} />
+          <Pressable onPress={() => navigation.navigate('Paramètres')} style={styles.avatar}>
+            {user?.photo_url ? (
+              <Image source={{ uri: `${SERVER_ORIGIN}${user.photo_url}` }} style={styles.avatarImage} />
+            ) : (
+              <Text style={styles.avatarText}>{(user?.prenom?.[0] || '') + (user?.nom?.[0] || '')}</Text>
+            )}
+          </Pressable>
+          <View style={styles.greetingTextWrap}>
+            <Text style={styles.greeting}>Bonjour{user?.prenom ? `, ${user.prenom}` : ''}</Text>
+            <Text style={styles.greetingSub}>Compte AfriPay</Text>
+          </View>
           <Pressable onPress={() => navigation.navigate('Notifications')} style={styles.bell}>
             <Icon name="bell" size={18} color={colors.white} />
           </Pressable>
@@ -75,11 +89,21 @@ export default function DashboardScreen({ navigation }) {
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <Card style={styles.balanceCard}>
-          <Text style={styles.balanceLabel}>Solde disponible</Text>
-          <Text style={styles.balanceValue}>{wallet ? formatFcfa(wallet.solde) : '—'}</Text>
+          <View style={styles.balanceHeaderRow}>
+            <Text style={styles.balanceLabel}>Solde disponible</Text>
+            <Pressable onPress={() => setBalanceHidden((v) => !v)} hitSlop={10}>
+              <Icon name={balanceHidden ? 'eye-slash' : 'eye'} size={16} color={colors.textSecondary} />
+            </Pressable>
+          </View>
+          <Text style={styles.balanceValue}>
+            {!wallet ? '—' : balanceHidden ? '•••••• FCFA' : formatFcfa(wallet.solde)}
+          </Text>
           {kyc ? (
             <View style={{ marginTop: 12 }}>
-              <StatusBadge label={`KYC : ${kycStatusLabel(kyc.statutKyc)}`} color={kycStatusColor(kyc.statutKyc)} />
+              <StatusBadge
+                label={kyc.statutKyc === 'validé' ? 'Compte vérifié · KYC validé' : `KYC ${kycStatusLabel(kyc.statutKyc).toLowerCase()}`}
+                color={kycStatusColor(kyc.statutKyc)}
+              />
             </View>
           ) : null}
         </Card>
@@ -121,12 +145,16 @@ export default function DashboardScreen({ navigation }) {
         ) : (
           recent.map((tx) => (
             <Card key={tx.id} style={styles.txRow}>
-              <View style={{ flex: 1 }}>
+              <TxTypeIcon type={tx.type} />
+              <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={styles.txTitle}>{tx.libelle || txTypeLabel(tx.type)}</Text>
                 <Text style={styles.txDate}>{formatDate(tx.date_heure)}</Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.txAmount}>{formatFcfa(tx.montant)}</Text>
+                <Text style={[styles.txAmount, { color: tx.type === 'recharge' ? colors.green : colors.white }]}>
+                  {tx.type === 'recharge' ? '+' : '-'}
+                  {formatFcfa(tx.montant)}
+                </Text>
                 <Text style={[styles.txStatus, { color: statutColor(tx.statut) }]}>{tx.statut}</Text>
               </View>
             </Card>
@@ -140,7 +168,7 @@ export default function DashboardScreen({ navigation }) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   content: { padding: 20, paddingBottom: 40 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
   bell: {
     width: 40,
     height: 40,
@@ -152,7 +180,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   errorText: { color: colors.danger, marginBottom: 12 },
+  greetingTextWrap: { flex: 1, marginHorizontal: 12 },
+  greeting: { color: colors.white, fontSize: 18, fontWeight: '700' },
+  greetingSub: { color: colors.textSecondary, fontSize: 12, marginTop: 2 },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.magenta,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: { width: 44, height: 44, borderRadius: 22 },
+  avatarText: { color: colors.white, fontWeight: '800', fontSize: 15 },
   balanceCard: { marginBottom: 16 },
+  balanceHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   balanceLabel: { color: colors.textSecondary, fontSize: 13 },
   balanceValue: { color: colors.white, fontSize: 32, fontWeight: '800', marginTop: 6 },
   kycBanner: { marginBottom: 16, borderColor: colors.gold },
@@ -174,7 +217,7 @@ const styles = StyleSheet.create({
   sectionTitle: { color: colors.white, fontWeight: '700', fontSize: 16 },
   sectionLink: { color: colors.blue, fontSize: 13 },
   emptyText: { color: colors.textSecondary },
-  txRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  txRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
   txTitle: { color: colors.white, fontWeight: '600' },
   txDate: { color: colors.textSecondary, fontSize: 12, marginTop: 2 },
   txAmount: { color: colors.white, fontWeight: '700' },

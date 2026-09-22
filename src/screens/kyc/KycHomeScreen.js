@@ -55,6 +55,8 @@ export default function KycHomeScreen({ navigation }) {
 
   const hasIdDoc = docs.some((d) => ID_DOC_TYPES.includes(d.type_document));
   const hasSelfie = docs.some((d) => d.type_document === 'selfie');
+  const hasPersonalInfo = !!(status && (status.statutKyc !== 'en_attente' || docs.length > 0));
+  const stepsDone = [hasPersonalInfo, hasIdDoc, hasSelfie, enrolled].filter(Boolean).length;
 
   if (loading) {
     return (
@@ -67,6 +69,13 @@ export default function KycHomeScreen({ navigation }) {
   return (
     <ScreenContainer scroll>
       <Text style={styles.title}>Vérification d&apos;identité (KYC)</Text>
+
+      <View style={styles.progressRow}>
+        <Text style={styles.progressLabel}>Étape {Math.min(stepsDone + 1, 4)} sur 4</Text>
+      </View>
+      <View style={styles.progressTrack}>
+        <View style={[styles.progressFill, { width: `${(stepsDone / 4) * 100}%` }]} />
+      </View>
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -93,7 +102,7 @@ export default function KycHomeScreen({ navigation }) {
       <Text style={styles.sectionLabel}>Étapes</Text>
       <Card style={{ paddingVertical: 4 }}>
         <StepRow
-          done={!!(status && (status.statutKyc !== 'en_attente' || docs.length > 0))}
+          done={hasPersonalInfo}
           title="1. Informations personnelles"
           subtitle="Nom, date de naissance, adresse"
           onPress={() => navigation.navigate('KycInfo')}
@@ -123,6 +132,16 @@ export default function KycHomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   title: { color: colors.white, fontSize: 20, fontWeight: '700', marginTop: 10, marginBottom: 16 },
+  progressRow: { marginBottom: 8 },
+  progressLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: '600' },
+  progressTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.border,
+    overflow: 'hidden',
+    marginBottom: 20,
+  },
+  progressFill: { height: '100%', borderRadius: 3, backgroundColor: colors.success },
   errorText: { color: colors.danger, marginBottom: 12 },
   statusCard: { marginBottom: 20 },
   statusText: { color: colors.white, fontSize: 13, marginTop: 10 },

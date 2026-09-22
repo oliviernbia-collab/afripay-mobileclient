@@ -3,12 +3,20 @@ import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator, Refresh
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Card from '../components/Card';
+import Icon from '../components/Icon';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../api/notifications';
 import { colors } from '../theme/colors';
 import { formatDate } from '../utils/format';
 
+const TYPE_ICONS = {
+  transaction: { icon: 'money-bill-transfer', color: colors.turquoise },
+  sécurité: { icon: 'shield-halved', color: colors.red },
+  système: { icon: 'circle-info', color: colors.blue },
+};
+
 export default function NotificationsScreen() {
   const [items, setItems] = useState([]);
+  const [tab, setTab] = useState('toutes');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -65,29 +73,54 @@ export default function NotificationsScreen() {
         </Pressable>
       </View>
 
+      <View style={styles.tabsRow}>
+        {[
+          { key: 'toutes', label: 'Toutes' },
+          { key: 'non_lues', label: 'Non lues' },
+        ].map((t) => (
+          <Pressable key={t.key} onPress={() => setTab(t.key)} style={[styles.tab, tab === t.key && styles.tabActive]}>
+            <Text style={[styles.tabText, tab === t.key && styles.tabTextActive]}>{t.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       {loading ? (
         <ActivityIndicator color={colors.white} style={{ marginTop: 30 }} />
       ) : (
         <FlatList
-          data={items}
+          data={tab === 'non_lues' ? items.filter((n) => !n.lu) : items}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
-          ListEmptyComponent={<Text style={styles.emptyText}>Aucune notification.</Text>}
-          renderItem={({ item }) => (
-            <Pressable onPress={() => onPressItem(item)}>
-              <Card style={[styles.row, !item.lu && styles.rowUnread]}>
-                <View style={styles.rowTop}>
-                  {!item.lu ? <View style={styles.dot} /> : null}
-                  <Text style={styles.rowTitle}>{item.titre}</Text>
-                </View>
-                <Text style={styles.rowContent}>{item.contenu}</Text>
-                <Text style={styles.rowDate}>{formatDate(item.date_creation || item.date_envoi)}</Text>
-              </Card>
-            </Pressable>
-          )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              {tab === 'non_lues' ? 'Aucune notification non lue.' : 'Aucune notification.'}
+            </Text>
+          }
+          renderItem={({ item }) => {
+            const typeStyle = TYPE_ICONS[item.type] || { icon: 'bell', color: colors.turquoise };
+            return (
+              <Pressable onPress={() => onPressItem(item)}>
+                <Card style={[styles.row, !item.lu && styles.rowUnread]}>
+                  <View style={styles.rowLayout}>
+                    <View style={[styles.typeIcon, { backgroundColor: `${typeStyle.color}22` }]}>
+                      <Icon name={typeStyle.icon} size={15} color={typeStyle.color} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={styles.rowTop}>
+                        {!item.lu ? <View style={styles.dot} /> : null}
+                        <Text style={styles.rowTitle}>{item.titre}</Text>
+                      </View>
+                      <Text style={styles.rowContent}>{item.contenu}</Text>
+                      <Text style={styles.rowDate}>{formatDate(item.date_creation || item.date_envoi)}</Text>
+                    </View>
+                  </View>
+                </Card>
+              </Pressable>
+            );
+          }}
         />
       )}
     </SafeAreaView>
@@ -106,9 +139,29 @@ const styles = StyleSheet.create({
   },
   title: { color: colors.white, fontSize: 22, fontWeight: '700' },
   markAll: { color: colors.blue, fontSize: 13 },
+  tabsRow: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 14, gap: 10 },
+  tab: {
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  tabActive: { backgroundColor: colors.blue, borderColor: colors.blue },
+  tabText: { color: colors.textSecondary, fontSize: 12, fontWeight: '600' },
+  tabTextActive: { color: colors.white },
   listContent: { paddingHorizontal: 20, paddingBottom: 30 },
   row: { marginBottom: 10 },
   rowUnread: { borderColor: colors.magenta },
+  rowLayout: { flexDirection: 'row', alignItems: 'flex-start' },
+  typeIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
   rowTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.magenta, marginRight: 8 },
   rowTitle: { color: colors.white, fontWeight: '700' },
