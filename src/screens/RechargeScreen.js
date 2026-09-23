@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../components/ScreenContainer';
 import Input from '../components/Input';
 import GradientButton from '../components/GradientButton';
@@ -13,7 +14,7 @@ import {
   getMyPaymentMethods,
   addPaymentMethod,
 } from '../api/recharges';
-import { colors, providerBrand } from '../theme/colors';
+import { colors, providerBrand, providerLabel } from '../theme/colors';
 import { formatFcfa } from '../utils/format';
 import { ApiError } from '../api/client';
 
@@ -22,6 +23,7 @@ function maskMethod(fournisseur, identifiant) {
 }
 
 export default function RechargeScreen({ navigation }) {
+  const { t } = useTranslation();
   const [providers, setProviders] = useState([]);
   const [selected, setSelected] = useState(null);
   const [montant, setMontant] = useState('');
@@ -44,20 +46,23 @@ export default function RechargeScreen({ navigation }) {
       .catch(() => setProviders(['wave', 'orange_money', 'moov_money', 'mtn_money', 'djamo', 'visa']));
   }, []);
 
-  const loadMethods = useCallback(async (fournisseur) => {
-    setLoadingMethods(true);
-    setMethodError('');
-    try {
-      const data = await getMyPaymentMethods(fournisseur);
-      setMethods(data);
-      setSelectedMethodId(data[0]?.id || null);
-      setShowAddForm(data.length === 0);
-    } catch (e) {
-      setMethodError(e.message || 'Impossible de charger vos moyens de paiement.');
-    } finally {
-      setLoadingMethods(false);
-    }
-  }, []);
+  const loadMethods = useCallback(
+    async (fournisseur) => {
+      setLoadingMethods(true);
+      setMethodError('');
+      try {
+        const data = await getMyPaymentMethods(fournisseur);
+        setMethods(data);
+        setSelectedMethodId(data[0]?.id || null);
+        setShowAddForm(data.length === 0);
+      } catch (e) {
+        setMethodError(e.message || t('recharge.errors.methodsLoadError'));
+      } finally {
+        setLoadingMethods(false);
+      }
+    },
+    [t]
+  );
 
   const onSelectProvider = (p) => {
     setSelected(p);
@@ -70,11 +75,11 @@ export default function RechargeScreen({ navigation }) {
     setMethodError('');
     const isVisa = selected === 'visa';
     if (isVisa && !/^\d{4}$/.test(newIdentifiant.trim())) {
-      setMethodError('Saisissez exactement les 4 derniers chiffres de la carte.');
+      setMethodError(t('recharge.errors.last4Required'));
       return;
     }
     if (!isVisa && !newIdentifiant.trim()) {
-      setMethodError('Saisissez le numéro associé à ce compte.');
+      setMethodError(t('recharge.errors.numberRequired'));
       return;
     }
     setSavingMethod(true);
@@ -85,7 +90,7 @@ export default function RechargeScreen({ navigation }) {
       setShowAddForm(false);
       setNewIdentifiant('');
     } catch (e) {
-      setMethodError(e.message || "Impossible d'enregistrer ce moyen de paiement.");
+      setMethodError(e.message || t('recharge.errors.methodSaveError'));
     } finally {
       setSavingMethod(false);
     }
@@ -96,16 +101,16 @@ export default function RechargeScreen({ navigation }) {
     setCapError(null);
     setSuccess(null);
     if (!selected) {
-      setError('Choisissez un moyen de recharge.');
+      setError(t('recharge.errors.chooseMethodRequired'));
       return;
     }
     if (!selectedMethodId) {
-      setError(`Enregistrez d'abord votre ${providerBrand[selected]?.label || selected} avant de recharger.`);
+      setError(t('recharge.errors.registerFirst', { provider: providerLabel(selected, t) }));
       return;
     }
     const amount = Number(montant);
     if (!amount || amount <= 0) {
-      setError('Saisissez un montant valide.');
+      setError(t('recharge.errors.invalidAmount'));
       return;
     }
     setLoading(true);
@@ -117,7 +122,7 @@ export default function RechargeScreen({ navigation }) {
       if (e instanceof ApiError && e.status === 403) {
         setCapError(e.message);
       } else {
-        setError(e.message || 'Recharge impossible.');
+        setError(e.message || t('recharge.errors.genericError'));
       }
     } finally {
       setLoading(false);
@@ -128,19 +133,16 @@ export default function RechargeScreen({ navigation }) {
 
   return (
     <ScreenContainer scroll>
-      <Text style={styles.title}>Recharger mon compte</Text>
+      <Text style={styles.title}>{t('recharge.title')}</Text>
       <ErrorBanner message={error} />
 
       {capError ? (
         <Card style={styles.capCard}>
-          <Text style={styles.capTitle}>Plafond de recharge atteint</Text>
+          <Text style={styles.capTitle}>{t('recharge.capTitle')}</Text>
           <Text style={styles.capText}>{capError}</Text>
-          <Text style={styles.capText}>
-            Tant que votre KYC n&apos;est pas validé, les recharges cumulées sont limitées à 10 000 FCFA. Complétez
-            votre KYC pour lever ce plafond.
-          </Text>
+          <Text style={styles.capText}>{t('recharge.capText')}</Text>
           <Pressable onPress={() => navigation.navigate('KycHome')} style={styles.capLinkRow}>
-            <Text style={styles.capLink}>Compléter mon KYC</Text>
+            <Text style={styles.capLink}>{t('recharge.completeKyc')}</Text>
             <Icon name="arrow-right" size={12} color={colors.blue} />
           </Pressable>
         </Card>
@@ -148,23 +150,28 @@ export default function RechargeScreen({ navigation }) {
 
       {success ? (
         <Card style={styles.successCard}>
-          <Text style={styles.successTitle}>Recharge réussie</Text>
+          <Text style={styles.successTitle}>{t('recharge.successTitle')}</Text>
           <Text style={styles.successText}>
-            {formatFcfa(success.transaction.montant)} ajoutés via {providerBrand[selected]?.label || selected}.
+            {t('recharge.successAdded', {
+              amount: formatFcfa(success.transaction.montant),
+              provider: providerLabel(selected, t),
+            })}
           </Text>
-          <Text style={styles.successText}>Nouveau solde : {formatFcfa(success.wallet.solde)}</Text>
+          <Text style={styles.successText}>
+            {t('recharge.successNewBalance', { balance: formatFcfa(success.wallet.solde) })}
+          </Text>
         </Card>
       ) : null}
 
-      <Text style={styles.sectionLabel}>Choisissez un moyen de paiement</Text>
+      <Text style={styles.sectionLabel}>{t('recharge.chooseMethod')}</Text>
       {providers.map((p) => {
-        const brand = providerBrand[p] || { label: p, color: colors.turquoise, icon: 'wallet' };
+        const brand = providerBrand[p] || { color: colors.turquoise, icon: 'wallet' };
         return (
           <IconRow
             key={p}
             icon={brand.icon}
             iconColor={brand.color}
-            label={brand.label}
+            label={providerLabel(p, t)}
             selected={selected === p}
             onPress={() => onSelectProvider(p)}
             showChevron={false}
@@ -175,9 +182,7 @@ export default function RechargeScreen({ navigation }) {
 
       {selected ? (
         <View style={styles.methodSection}>
-          <Text style={styles.sectionLabel}>
-            Votre compte {providerBrand[selected]?.label || selected}
-          </Text>
+          <Text style={styles.sectionLabel}>{t('recharge.yourAccount', { provider: providerLabel(selected, t) })}</Text>
 
           {methodError ? <ErrorBanner message={methodError} /> : null}
 
@@ -207,14 +212,14 @@ export default function RechargeScreen({ navigation }) {
                 <Pressable onPress={() => setShowAddForm(true)} style={styles.addLink}>
                   <Icon name="plus" size={12} color={colors.blue} />
                   <Text style={styles.addLinkText}>
-                    {isVisa ? 'Ajouter une autre carte' : 'Ajouter un autre numéro'}
+                    {isVisa ? t('recharge.addAnotherCard') : t('recharge.addAnotherNumber')}
                   </Text>
                 </Pressable>
               ) : (
                 <Card style={styles.addCard}>
                   <Input
-                    label={isVisa ? '4 derniers chiffres de la carte' : `Numéro ${providerBrand[selected]?.label || selected}`}
-                    placeholder={isVisa ? 'Ex: 4242' : 'Ex: 0102030405'}
+                    label={isVisa ? t('recharge.cardLast4Label') : t('recharge.phoneNumberLabel', { provider: providerLabel(selected, t) })}
+                    placeholder={isVisa ? t('recharge.cardPlaceholder') : t('recharge.phonePlaceholder')}
                     keyboardType={isVisa ? 'number-pad' : 'phone-pad'}
                     maxLength={isVisa ? 4 : undefined}
                     value={newIdentifiant}
@@ -222,14 +227,14 @@ export default function RechargeScreen({ navigation }) {
                   />
                   <View style={styles.addCardActions}>
                     <GradientButton
-                      title="Enregistrer"
+                      title={t('common.save')}
                       onPress={onSaveMethod}
                       loading={savingMethod}
                       style={{ flex: 1 }}
                     />
                     {methods.length > 0 ? (
                       <Pressable onPress={() => setShowAddForm(false)} style={styles.cancelAddBtn}>
-                        <Text style={styles.cancelAddText}>Annuler</Text>
+                        <Text style={styles.cancelAddText}>{t('common.cancel')}</Text>
                       </Pressable>
                     ) : null}
                   </View>
@@ -241,15 +246,15 @@ export default function RechargeScreen({ navigation }) {
       ) : null}
 
       <Input
-        label="Montant (FCFA)"
-        placeholder="Ex: 5000"
+        label={t('recharge.amountLabel')}
+        placeholder={t('recharge.amountPlaceholder')}
         keyboardType="number-pad"
         value={montant}
         onChangeText={setMontant}
         style={{ marginTop: 8 }}
       />
 
-      <GradientButton title="Recharger" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <GradientButton title={t('recharge.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
     </ScreenContainer>
   );
 }

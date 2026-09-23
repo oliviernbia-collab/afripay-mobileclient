@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next';
 import Icon from '../components/Icon';
 import { colors } from '../theme/colors';
 import DashboardScreen from '../screens/DashboardScreen';
@@ -24,7 +25,11 @@ function TabIcon({ route, focused }) {
   );
 }
 
+// Route names stay fixed French keys (used throughout for navigation.navigate calls) —
+// only the visible tabBarLabel is translated here.
 export default function MainTabs() {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -35,11 +40,11 @@ export default function MainTabs() {
         tabBarIcon: ({ focused }) => <TabIcon route={route} focused={focused} />,
       })}
     >
-      <Tab.Screen name="Accueil" component={DashboardScreen} />
-      <Tab.Screen name="Payer" component={PayerScreen} />
-      <Tab.Screen name="Historique" component={HistoriqueScreen} />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />
-      <Tab.Screen name="Paramètres" component={ParametresScreen} />
+      <Tab.Screen name="Accueil" component={DashboardScreen} options={{ tabBarLabel: t('nav.accueil') }} />
+      <Tab.Screen name="Payer" component={PayerScreen} options={{ tabBarLabel: t('nav.payer') }} />
+      <Tab.Screen name="Historique" component={HistoriqueScreen} options={{ tabBarLabel: t('nav.historique') }} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ tabBarLabel: t('nav.notifications') }} />
+      <Tab.Screen name="Paramètres" component={ParametresScreen} options={{ tabBarLabel: t('nav.parametres') }} />
     </Tab.Navigator>
   );
 }

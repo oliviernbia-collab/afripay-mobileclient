@@ -1,27 +1,39 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Card from '../../components/Card';
 import GradientButton from '../../components/GradientButton';
 import ErrorBanner from '../../components/ErrorBanner';
 import Icon from '../../components/Icon';
-import { enrollPalm, getBiometricStatus } from '../../api/biometrie';
+import PalmBiometricWebView from '../../components/PalmBiometricWebView';
+import {
+  enrollPalm,
+  getBiometricStatus,
+  getTencentEnrollSession,
+  confirmTencentEnrollment,
+} from '../../api/biometrie';
 import { colors } from '../../theme/colors';
+import { TENCENT_PALM_ENABLED } from '../../config/features';
 
 // The mockup shows a live camera capture of the palm; there is no real palm
 // sensor here (documented in README.md as a mocked capability), so this is a
 // purely decorative capture animation that runs before calling the existing
-// enrollPalm() mock API — it never pretends to read anything.
+// enrollPalm() mock API — it never pretends to read anything. Once
+// TENCENT_PALM_ENABLED is flipped on (see config/features.js), `onEnroll` opens
+// the real Tencent PalmAI widget instead of running this animation.
 const CAPTURE_DURATION_MS = 1400;
 
 export default function KycEnrollScreen({ navigation }) {
+  const { t } = useTranslation();
   const [enrolled, setEnrolled] = useState(false);
   const [checking, setChecking] = useState(true);
   const [capturing, setCapturing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [palmCode, setPalmCode] = useState(null);
+  const [tencentSession, setTencentSession] = useState(null);
   const captureTimer = useRef(null);
 
   useFocusEffect(
@@ -35,7 +47,7 @@ export default function KycEnrollScreen({ navigation }) {
     }, [])
   );
 
-  const onEnroll = () => {
+  const onEnrollMock = () => {
     setError('');
     setCapturing(true);
     captureTimer.current = setTimeout(async () => {
@@ -46,20 +58,49 @@ export default function KycEnrollScreen({ navigation }) {
         setPalmCode(result.palmCode);
         setEnrolled(true);
       } catch (e) {
-        setError(e.message || "L'enrôlement a échoué.");
+        setError(e.message || t('kyc.enroll.error'));
       } finally {
         setLoading(false);
       }
     }, CAPTURE_DURATION_MS);
   };
 
+  const onEnrollTencent = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const session = await getTencentEnrollSession();
+      setTencentSession(session);
+    } catch (e) {
+      setError(e.message || t('kyc.enroll.error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onWebViewResult = async (result) => {
+    setTencentSession(null);
+    if (result?.code !== 0) {
+      setError(result?.message || t('kyc.enroll.error'));
+      return;
+    }
+    setLoading(true);
+    try {
+      await confirmTencentEnrollment();
+      setEnrolled(true);
+    } catch (e) {
+      setError(e.message || t('kyc.enroll.error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onEnroll = TENCENT_PALM_ENABLED ? onEnrollTencent : onEnrollMock;
+
   return (
     <ScreenContainer>
-      <Text style={styles.title}>Enrôlement de la paume</Text>
-      <Text style={styles.subtitle}>
-        Dernière étape : nous générons votre code de paiement AfriPay, l&apos;équivalent numérique de votre paume,
-        utilisé pour payer chez les marchands sans espèces ni carte.
-      </Text>
+      <Text style={styles.title}>{t('kyc.enroll.title')}</Text>
+      <Text style={styles.subtitle}>{t('kyc.enroll.subtitle')}</Text>
 
       <ErrorBanner message={error} />
 
@@ -67,24 +108,22 @@ export default function KycEnrollScreen({ navigation }) {
         <View style={styles.captureFrame}>
           <Icon name="hand" size={72} color={colors.turquoise} />
           <ActivityIndicator color={colors.white} style={{ marginTop: 18 }} />
-          <Text style={styles.captureText}>Capture en cours...</Text>
+          <Text style={styles.captureText}>{t('kyc.enroll.capturing')}</Text>
         </View>
       ) : checking ? (
         <ActivityIndicator color={colors.white} style={{ marginTop: 30 }} />
       ) : enrolled ? (
         <Card style={styles.successCard}>
-          <Text style={styles.successTitle}>Votre code de paiement AfriPay est prêt</Text>
+          <Text style={styles.successTitle}>{t('kyc.enroll.readyTitle')}</Text>
           {palmCode ? <Text style={styles.palmCode}>{palmCode}</Text> : null}
-          <Text style={styles.successText}>
-            Rendez-vous sur l&apos;onglet &quot;Payer&quot; pour présenter votre QR code aux marchands AfriPay.
-          </Text>
+          <Text style={styles.successText}>{t('kyc.enroll.readyText')}</Text>
           <GradientButton
-            title="Voir mon code de paiement"
+            title={t('kyc.enroll.viewCode')}
             onPress={() => navigation.navigate('MainTabs', { screen: 'Payer' })}
             style={{ marginTop: 14 }}
           />
           <GradientButton
-            title="Régénérer le code"
+            title={t('kyc.enroll.regenerate')}
             onPress={onEnroll}
             loading={loading}
             variant="outline"
@@ -93,12 +132,17 @@ export default function KycEnrollScreen({ navigation }) {
         </Card>
       ) : (
         <Card>
-          <Text style={styles.infoText}>
-            Placez votre main devant la caméra et suivez les instructions pour générer votre code de paiement.
-          </Text>
-          <GradientButton title="Lancer l'enrôlement" onPress={onEnroll} loading={loading} style={{ marginTop: 14 }} />
+          <Text style={styles.infoText}>{t('kyc.enroll.infoText')}</Text>
+          <GradientButton title={t('kyc.enroll.launch')} onPress={onEnroll} loading={loading} style={{ marginTop: 14 }} />
         </Card>
       )}
+
+      <PalmBiometricWebView
+        visible={!!tencentSession}
+        session={tencentSession}
+        onResult={onWebViewResult}
+        onClose={() => setTencentSession(null)}
+      />
     </ScreenContainer>
   );
 }

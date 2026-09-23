@@ -35,3 +35,11 @@ export const API_HOST = HOSTS[MODE] || LAN_IP;
 export const API_BASE_URL = `http://${API_HOST}:${PORT}/api`;
 // Used to build absolute URLs for files served under /uploads/<file>
 export const SERVER_ORIGIN = `http://${API_HOST}:${PORT}`;
+
+// Photos / documents are now stored on Cloudinary and come back as absolute
+// https:// URLs. Older records may still hold a relative "/uploads/<file>"
+// path, so only prefix with SERVER_ORIGIN when the value isn't already absolute.
+export function resolveMediaUrl(url) {
+  if (!url) return url;
+  return /^https?:\/\//i.test(url) ? url : `${SERVER_ORIGIN}${url}`;
+}

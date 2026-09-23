@@ -1,17 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Share } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../components/ScreenContainer';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import StatusBadge from '../components/StatusBadge';
-import { colors, statutColor, txTypeLabel, txMethodLabel } from '../theme/colors';
+import { colors, statutColor, statutLabel, txTypeLabel, txMethodLabel } from '../theme/colors';
 import { formatFcfa, formatDate } from '../utils/format';
-
-const TX_TITLES = {
-  recharge: 'Rechargement réussi',
-  achat: 'Paiement effectué',
-  transfert: 'Transfert envoyé',
-};
 
 function Row({ label, value }) {
   return (
@@ -23,20 +18,31 @@ function Row({ label, value }) {
 }
 
 export default function HistoriqueDetailScreen({ route }) {
-  const { transaction } = route.params;
+  const { t } = useTranslation();
+  const { transaction, walletId } = route.params;
   const isFailed = transaction.statut === 'échoué';
-  const isCredit = transaction.type === 'recharge';
+  const isCredit = walletId ? transaction.wallet_destination_id === walletId : transaction.type === 'recharge';
+
+  const TX_TITLES = {
+    recharge: t('historiqueDetail.titleRechargeSuccess'),
+    achat: t('historiqueDetail.titlePurchaseSuccess'),
+    transfert: t(isCredit ? 'historiqueDetail.titleTransferReceived' : 'historiqueDetail.titleTransferSent'),
+  };
+
   const title = isFailed
-    ? `${txTypeLabel(transaction.type)} échoué`
+    ? `${txTypeLabel(transaction.type, t)} ${t('historiqueDetail.titleFailedSuffix')}`
     : transaction.statut === 'en_attente'
-    ? `${txTypeLabel(transaction.type)} en attente`
-    : TX_TITLES[transaction.type] || `${txTypeLabel(transaction.type)} réussi`;
+    ? `${txTypeLabel(transaction.type, t)} ${t('historiqueDetail.titlePendingSuffix')}`
+    : TX_TITLES[transaction.type] || TX_TITLES.recharge;
 
   const onShare = () => {
     Share.share({
-      message: `AfriPay — ${title}\nMontant : ${formatFcfa(transaction.montant)}\nRéférence : ${
-        transaction.reference || '—'
-      }\nDate : ${formatDate(transaction.date_heure)}`,
+      message: t('historiqueDetail.shareMessage', {
+        title,
+        amount: formatFcfa(transaction.montant),
+        reference: transaction.reference || '—',
+        date: formatDate(transaction.date_heure),
+      }),
     });
   };
 
@@ -54,22 +60,28 @@ export default function HistoriqueDetailScreen({ route }) {
           {formatFcfa(transaction.montant)}
         </Text>
         <View style={{ marginTop: 10 }}>
-          <StatusBadge label={transaction.statut} color={statutColor(transaction.statut)} />
+          <StatusBadge label={statutLabel(transaction.statut, t)} color={statutColor(transaction.statut)} />
         </View>
       </Card>
 
       <Card>
-        <Row label="Type" value={txTypeLabel(transaction.type)} />
-        <Row label="Méthode" value={txMethodLabel(transaction.méthode)} />
-        <Row label="Référence" value={transaction.reference || '—'} />
-        <Row label="Date" value={formatDate(transaction.date_heure)} />
-        {transaction.frais ? <Row label="Frais" value={formatFcfa(transaction.frais)} /> : null}
-        {transaction.libelle ? <Row label="Note" value={transaction.libelle} /> : null}
+        <Row label={t('historiqueDetail.typeLabel')} value={txTypeLabel(transaction.type, t)} />
+        <Row label={t('historiqueDetail.methodLabel')} value={txMethodLabel(transaction.méthode, t)} />
+        {transaction.contrepartie?.nom ? (
+          <Row label={t('historiqueDetail.counterpartyLabel')} value={transaction.contrepartie.nom} />
+        ) : null}
+        {transaction.contrepartie?.telephone ? (
+          <Row label={t('historiqueDetail.numberLabel')} value={transaction.contrepartie.telephone} />
+        ) : null}
+        <Row label={t('historiqueDetail.referenceLabel')} value={transaction.reference || '—'} />
+        <Row label={t('historiqueDetail.dateLabel')} value={formatDate(transaction.date_heure)} />
+        {transaction.frais ? <Row label={t('historiqueDetail.feesLabel')} value={formatFcfa(transaction.frais)} /> : null}
+        {transaction.libelle ? <Row label={t('historiqueDetail.noteLabel')} value={transaction.libelle} /> : null}
       </Card>
 
       <Pressable onPress={onShare} style={styles.shareBtn}>
         <Icon name="share-nodes" size={15} color={colors.blue} />
-        <Text style={styles.shareText}>Partager le reçu</Text>
+        <Text style={styles.shareText}>{t('historiqueDetail.share')}</Text>
       </Pressable>
     </ScreenContainer>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
@@ -8,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { colors } from '../../theme/colors';
 
 export default function RegisterDetailsScreen({ route, navigation }) {
+  const { t } = useTranslation();
   const { telephone, otp } = route.params;
   const { register } = useAuth();
   const [nom, setNom] = useState('');
@@ -21,15 +23,15 @@ export default function RegisterDetailsScreen({ route, navigation }) {
   const onSubmit = async () => {
     setError('');
     if (!nom.trim() || !prenom.trim() || !motDePasse) {
-      setError('Nom, prénom et mot de passe sont requis.');
+      setError(t('auth.registerDetails.missingFields'));
       return;
     }
     if (motDePasse.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères.');
+      setError(t('auth.registerDetails.passwordTooShort'));
       return;
     }
     if (motDePasse !== confirmation) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError(t('auth.registerDetails.passwordMismatch'));
       return;
     }
     setLoading(true);
@@ -44,7 +46,7 @@ export default function RegisterDetailsScreen({ route, navigation }) {
       });
       navigation.reset({ index: 0, routes: [{ name: 'PinSetup' }] });
     } catch (e) {
-      setError(e.message || 'Inscription impossible.');
+      setError(e.message || t('auth.registerDetails.error'));
     } finally {
       setLoading(false);
     }
@@ -52,12 +54,22 @@ export default function RegisterDetailsScreen({ route, navigation }) {
 
   return (
     <ScreenContainer scroll>
-      <Text style={styles.title}>Vos informations</Text>
+      <Text style={styles.title}>{t('auth.registerDetails.title')}</Text>
       <ErrorBanner message={error} />
-      <Input label="Nom" placeholder="Kouassi" value={nom} onChangeText={setNom} />
-      <Input label="Prénom" placeholder="Awa" value={prenom} onChangeText={setPrenom} />
       <Input
-        label="Email (optionnel)"
+        label={t('auth.registerDetails.nameLabel')}
+        placeholder={t('auth.registerDetails.namePlaceholder')}
+        value={nom}
+        onChangeText={setNom}
+      />
+      <Input
+        label={t('auth.registerDetails.firstNameLabel')}
+        placeholder={t('auth.registerDetails.firstNamePlaceholder')}
+        value={prenom}
+        onChangeText={setPrenom}
+      />
+      <Input
+        label={t('auth.registerDetails.emailLabel')}
         placeholder="awa@email.com"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -65,20 +77,20 @@ export default function RegisterDetailsScreen({ route, navigation }) {
         onChangeText={setEmail}
       />
       <Input
-        label="Mot de passe"
-        placeholder="Au moins 6 caractères"
+        label={t('auth.registerDetails.passwordLabel')}
+        placeholder={t('auth.registerDetails.passwordPlaceholder')}
         secureTextEntry
         value={motDePasse}
         onChangeText={setMotDePasse}
       />
       <Input
-        label="Confirmer le mot de passe"
+        label={t('auth.registerDetails.confirmLabel')}
         placeholder="••••••••"
         secureTextEntry
         value={confirmation}
         onChangeText={setConfirmation}
       />
-      <GradientButton title="Créer mon compte" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <GradientButton title={t('auth.registerDetails.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
     </ScreenContainer>
   );
 }

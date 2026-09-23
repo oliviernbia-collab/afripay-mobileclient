@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, Pressable, Alert, Switch, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable, Alert, Switch, ActivityIndicator, ScrollView, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import { useTranslation } from 'react-i18next';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
 import { colors, kycStatusColor, kycStatusLabel } from '../theme/colors';
 import StatusBadge from '../components/StatusBadge';
-import { SERVER_ORIGIN } from '../config/api';
+import { resolveMediaUrl } from '../config/api';
 import { uploadMyPhoto, removeMyPhoto } from '../api/kyc';
 import {
   getBiometricCapability,
@@ -31,6 +32,7 @@ function MenuItem({ icon, label, onPress, danger }) {
 // Renders its own section label + card, and nothing at all on a device with no biometric
 // hardware/enrollment — so Paramètres never shows an empty "Sécurité" card.
 function BiometricLockSection() {
+  const { t } = useTranslation();
   const [available, setAvailable] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -51,7 +53,7 @@ function BiometricLockSection() {
         // verrouillage, pour ne jamais risquer de bloquer l'accès à son propre compte.
         const ok = await promptBiometricUnlock();
         if (!ok) {
-          Alert.alert('Activation annulée', "L'authentification n'a pas pu être vérifiée.");
+          Alert.alert(t('parametres.biometricActivationCancelledTitle'), t('parametres.biometricActivationCancelledText'));
           return;
         }
       }
@@ -66,15 +68,15 @@ function BiometricLockSection() {
 
   return (
     <>
-      <Text style={styles.sectionLabel}>Sécurité</Text>
+      <Text style={styles.sectionLabel}>{t('parametres.sectionSecurity')}</Text>
       <Card style={{ paddingVertical: 4 }}>
         <View style={styles.switchRow}>
           <View style={styles.menuIcon}>
             <Icon name="fingerprint" size={15} color={colors.turquoise} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.menuLabel}>Biométrie du téléphone</Text>
-            <Text style={styles.switchSubtitle}>Face ID / empreinte pour ouvrir l&apos;app</Text>
+            <Text style={styles.menuLabel}>{t('parametres.biometricLockTitle')}</Text>
+            <Text style={styles.switchSubtitle}>{t('parametres.biometricLockSubtitle')}</Text>
           </View>
           <Switch
             value={enabled}
@@ -92,6 +94,7 @@ function BiometricLockSection() {
 // Photo de profil (section 5.6) : tap ouvre caméra/galerie, appui long propose de retirer la
 // photo actuelle. Met à jour AuthContext via refreshUser() pour refléter le changement partout.
 function ProfileAvatar({ user }) {
+  const { t } = useTranslation();
   const { refreshUser } = useAuth();
   const [uploading, setUploading] = useState(false);
 
@@ -100,7 +103,7 @@ function ProfileAvatar({ user }) {
       ? await ImagePicker.requestCameraPermissionsAsync()
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('Permission refusée', "Autorisez l'accès pour changer votre photo de profil.");
+      Alert.alert(t('parametres.photo.permissionDeniedTitle'), t('parametres.photo.permissionDeniedText'));
       return;
     }
     const result = fromCamera
@@ -113,17 +116,17 @@ function ProfileAvatar({ user }) {
       await uploadMyPhoto(result.assets[0].uri);
       await refreshUser();
     } catch (e) {
-      Alert.alert('Erreur', e.message || "Impossible d'envoyer la photo.");
+      Alert.alert(t('parametres.photo.genericError'), e.message || t('parametres.photo.uploadError'));
     } finally {
       setUploading(false);
     }
   };
 
   const onRemove = () => {
-    Alert.alert('Retirer la photo', 'Voulez-vous revenir à vos initiales ?', [
-      { text: 'Annuler', style: 'cancel' },
+    Alert.alert(t('parametres.photo.removeConfirmTitle'), t('parametres.photo.removeConfirmText'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Retirer',
+        text: t('common.remove'),
         style: 'destructive',
         onPress: async () => {
           setUploading(true);
@@ -131,7 +134,7 @@ function ProfileAvatar({ user }) {
             await removeMyPhoto();
             await refreshUser();
           } catch (e) {
-            Alert.alert('Erreur', e.message || 'Impossible de retirer la photo.');
+            Alert.alert(t('parametres.photo.genericError'), e.message || t('parametres.photo.removeError'));
           } finally {
             setUploading(false);
           }
@@ -142,12 +145,12 @@ function ProfileAvatar({ user }) {
 
   const onPress = () => {
     const options = [
-      { text: 'Prendre une photo', onPress: () => pickAndUpload(true) },
-      { text: 'Choisir dans la galerie', onPress: () => pickAndUpload(false) },
+      { text: t('parametres.photo.takePhoto'), onPress: () => pickAndUpload(true) },
+      { text: t('parametres.photo.chooseGallery'), onPress: () => pickAndUpload(false) },
     ];
-    if (user?.photo_url) options.push({ text: 'Retirer la photo', style: 'destructive', onPress: onRemove });
-    options.push({ text: 'Annuler', style: 'cancel' });
-    Alert.alert('Photo de profil', undefined, options);
+    if (user?.photo_url) options.push({ text: t('parametres.photo.remove'), style: 'destructive', onPress: onRemove });
+    options.push({ text: t('common.cancel'), style: 'cancel' });
+    Alert.alert(t('parametres.photo.title'), undefined, options);
   };
 
   return (
@@ -155,7 +158,7 @@ function ProfileAvatar({ user }) {
       {uploading ? (
         <ActivityIndicator color={colors.white} />
       ) : user?.photo_url ? (
-        <Image source={{ uri: `${SERVER_ORIGIN}${user.photo_url}` }} style={styles.avatarImage} />
+        <Image source={{ uri: resolveMediaUrl(user.photo_url) }} style={styles.avatarImage} />
       ) : (
         <Text style={styles.avatarText}>{(user?.prenom?.[0] || '') + (user?.nom?.[0] || '')}</Text>
       )}
@@ -167,19 +170,24 @@ function ProfileAvatar({ user }) {
 }
 
 export default function ParametresScreen({ navigation }) {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
 
   const confirmLogout = () => {
-    Alert.alert('Déconnexion', 'Voulez-vous vraiment vous déconnecter ?', [
-      { text: 'Annuler', style: 'cancel' },
-      { text: 'Déconnexion', style: 'destructive', onPress: logout },
+    Alert.alert(t('parametres.logoutConfirmTitle'), t('parametres.logoutConfirmText'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('parametres.logout'), style: 'destructive', onPress: logout },
     ]);
+  };
+
+  const onShareApp = () => {
+    Share.share({ message: t('about.shareMessage') });
   };
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Paramètres</Text>
+        <Text style={styles.title}>{t('parametres.title')}</Text>
 
         <Card style={styles.profileCard}>
           <ProfileAvatar user={user} />
@@ -189,35 +197,46 @@ export default function ParametresScreen({ navigation }) {
           <Text style={styles.profilePhone}>{user?.telephone}</Text>
           {user?.email ? <Text style={styles.profilePhone}>{user.email}</Text> : null}
           <View style={{ marginTop: 10 }}>
-            <StatusBadge label={`KYC : ${kycStatusLabel(user?.statut_kyc)}`} color={kycStatusColor(user?.statut_kyc)} />
+            <StatusBadge
+              label={t('status.kycLabel', { status: kycStatusLabel(user?.statut_kyc, t) })}
+              color={kycStatusColor(user?.statut_kyc)}
+            />
           </View>
         </Card>
 
-        <Text style={styles.sectionLabel}>Compte</Text>
+        <Text style={styles.sectionLabel}>{t('parametres.sectionAccount')}</Text>
         <Card style={{ paddingVertical: 4 }}>
-          <MenuItem icon="id-card" label="Informations personnelles" onPress={() => navigation.navigate('KycInfo')} />
-          <MenuItem icon="shield-halved" label="KYC & vérification" onPress={() => navigation.navigate('KycHome')} />
+          <MenuItem icon="id-card" label={t('parametres.personalInfo')} onPress={() => navigation.navigate('KycInfo')} />
+          <MenuItem icon="shield-halved" label={t('parametres.kycVerification')} onPress={() => navigation.navigate('KycHome')} />
           <MenuItem
             icon="key"
-            label="Code PIN AfriPay"
+            label={t('parametres.pinCode')}
             onPress={() => navigation.navigate('PinSetup', { mode: 'change' })}
           />
           <MenuItem
             icon="mobile-screen-button"
-            label="Appareils connectés"
+            label={t('parametres.connectedDevices')}
             onPress={() => navigation.navigate('AppareilsConnectes')}
           />
         </Card>
 
         <BiometricLockSection />
 
-        <Text style={styles.sectionLabel}>Aide</Text>
+        <Text style={styles.sectionLabel}>{t('parametres.sectionHelp')}</Text>
         <Card style={{ paddingVertical: 4 }}>
-          <MenuItem icon="circle-question" label="Assistance & FAQ" onPress={() => navigation.navigate('Support')} />
+          <MenuItem icon="circle-question" label={t('parametres.faq')} onPress={() => navigation.navigate('Support')} />
+          <MenuItem icon="share-nodes" label={t('parametres.shareApp')} onPress={onShareApp} />
+        </Card>
+
+        <Text style={styles.sectionLabel}>{t('parametres.sectionLegal')}</Text>
+        <Card style={{ paddingVertical: 4 }}>
+          <MenuItem icon="file-contract" label={t('parametres.terms')} onPress={() => navigation.navigate('Terms')} />
+          <MenuItem icon="user-shield" label={t('parametres.privacy')} onPress={() => navigation.navigate('Privacy')} />
+          <MenuItem icon="circle-info" label={t('about.title')} onPress={() => navigation.navigate('About')} />
         </Card>
 
         <Card style={{ marginTop: 16, paddingVertical: 4 }}>
-          <MenuItem icon="right-from-bracket" label="Se déconnecter" danger onPress={confirmLogout} />
+          <MenuItem icon="right-from-bracket" label={t('parametres.logout')} danger onPress={confirmLogout} />
         </Card>
       </ScrollView>
     </SafeAreaView>

@@ -1,0 +1,508 @@
+{
+  "common": {
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "send": "Envoyer",
+    "continue": "Continuer",
+    "confirm": "Confirmer",
+    "remove": "Retirer",
+    "seeAll": "Voir tout",
+    "camera": "Caméra",
+    "gallery": "Galerie",
+    "error": "Erreur",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "sessionExpired": "Session expirée",
+    "sessionExpiredReconnect": "Session expirée, veuillez vous reconnecter",
+    "refreshFailed": "Rafraîchissement échoué",
+    "networkError": "Erreur réseau ({{status}})"
+  },
+  "nav": {
+    "accueil": "Accueil",
+    "payer": "Payer",
+    "historique": "Historique",
+    "notifications": "Notifications",
+    "parametres": "Paramètres"
+  },
+  "language": {
+    "select": "Choisir la langue",
+    "fr": "Français",
+    "en": "Anglais",
+    "es": "Espagnol"
+  },
+  "dashboard": {
+    "greeting": "Bonjour",
+    "subtitle": "Compte AfriPay",
+    "balanceLabel": "Solde disponible",
+    "kycVerified": "Compte vérifié · KYC validé",
+    "kycStatusPrefix": "KYC {{status}}",
+    "completeKycTitle": "Complétez votre KYC",
+    "completeKycText": "Vérifiez votre identité pour lever le plafond de recharge (10 000 FCFA) et activer le paiement par paume.",
+    "transactionsRecent": "Transactions récentes",
+    "noTransactions": "Aucune transaction pour le moment.",
+    "loadError": "Impossible de charger le tableau de bord.",
+    "actions": {
+      "recharge": "Recharger",
+      "transfer": "Transférer",
+      "pay": "Payer",
+      "history": "Historique"
+    }
+  },
+  "sideMenu": {
+    "personalInfo": "Informations personnelles",
+    "kycVerification": "KYC & vérification",
+    "pinCode": "Code PIN AfriPay",
+    "connectedDevices": "Appareils connectés",
+    "allSettings": "Tous les paramètres",
+    "helpFaq": "Assistance & FAQ",
+    "logout": "Se déconnecter",
+    "logoutConfirmTitle": "Déconnexion",
+    "logoutConfirmText": "Voulez-vous vraiment vous déconnecter ?"
+  },
+  "parametres": {
+    "title": "Paramètres",
+    "sectionAccount": "Compte",
+    "sectionSecurity": "Sécurité",
+    "sectionHelp": "Aide",
+    "sectionLegal": "Légal",
+    "personalInfo": "Informations personnelles",
+    "kycVerification": "KYC & vérification",
+    "pinCode": "Code PIN AfriPay",
+    "connectedDevices": "Appareils connectés",
+    "biometricLockTitle": "Biométrie du téléphone",
+    "biometricLockSubtitle": "Face ID / empreinte pour ouvrir l'app",
+    "faq": "Obtenir de l'aide",
+    "shareApp": "Partager l'application",
+    "terms": "Conditions générales d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "logout": "Se déconnecter",
+    "logoutConfirmTitle": "Déconnexion",
+    "logoutConfirmText": "Voulez-vous vraiment vous déconnecter ?",
+    "photo": {
+      "title": "Photo de profil",
+      "takePhoto": "Prendre une photo",
+      "chooseGallery": "Choisir dans la galerie",
+      "remove": "Retirer la photo",
+      "permissionDeniedTitle": "Permission refusée",
+      "permissionDeniedText": "Autorisez l'accès pour changer votre photo de profil.",
+      "removeConfirmTitle": "Retirer la photo",
+      "removeConfirmText": "Voulez-vous revenir à vos initiales ?",
+      "uploadError": "Impossible d'envoyer la photo.",
+      "removeError": "Impossible de retirer la photo.",
+      "genericError": "Erreur"
+    },
+    "biometricActivationCancelledTitle": "Activation annulée",
+    "biometricActivationCancelledText": "L'authentification n'a pas pu être vérifiée."
+  },
+  "payer": {
+    "title": "Scan de paiement AfriPay",
+    "subtitle": "Présentez ce code au terminal du marchand pour payer instantanément, sans espèces ni carte.",
+    "codeUnavailableTitle": "Code de paiement non disponible",
+    "codeUnavailableText": "Terminez votre parcours KYC (enrôlement de la paume) pour activer votre code de paiement AfriPay.",
+    "completeKyc": "Compléter mon KYC",
+    "scanHint": "Présentez votre paume pour payer",
+    "balanceLabel": "Solde disponible",
+    "refresh": "Actualiser mon code",
+    "loadError": "Impossible de charger votre code de paiement."
+  },
+  "historique": {
+    "title": "Historique",
+    "typeAll": "Toutes",
+    "typePurchases": "Achats",
+    "typeRecharges": "Recharges",
+    "typeTransfers": "Transferts",
+    "statusAll": "Tous statuts",
+    "statusSuccess": "Réussi",
+    "statusPending": "En attente",
+    "statusFailed": "Échoué",
+    "periodAll": "Toute période",
+    "periodToday": "Aujourd'hui",
+    "periodLast7": "7 derniers jours",
+    "periodThisMonth": "Ce mois",
+    "empty": "Aucune transaction trouvée.",
+    "loadError": "Impossible de charger l'historique.",
+    "receivedFrom": "Reçu de {{name}}",
+    "sentTo": "Envoyé à {{name}}",
+    "transferReceived": "Transfert reçu",
+    "transferSent": "Transfert envoyé"
+  },
+  "historiqueDetail": {
+    "typeLabel": "Type",
+    "methodLabel": "Méthode",
+    "referenceLabel": "Référence",
+    "dateLabel": "Date",
+    "feesLabel": "Frais",
+    "noteLabel": "Note",
+    "share": "Partager le reçu",
+    "titleRechargeSuccess": "Rechargement réussi",
+    "titlePurchaseSuccess": "Paiement effectué",
+    "titleFailedSuffix": "échoué",
+    "titlePendingSuffix": "en attente",
+    "shareMessage": "AfriPay — {{title}}\nMontant : {{amount}}\nRéférence : {{reference}}\nDate : {{date}}",
+    "titleTransferReceived": "Transfert reçu",
+    "titleTransferSent": "Transfert envoyé",
+    "counterpartyLabel": "Contact",
+    "numberLabel": "Numéro"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Tout marquer lu",
+    "tabAll": "Toutes",
+    "tabUnread": "Non lues",
+    "emptyUnread": "Aucune notification non lue.",
+    "emptyAll": "Aucune notification.",
+    "loadError": "Impossible de charger les notifications."
+  },
+  "recharge": {
+    "title": "Recharger mon compte",
+    "chooseMethod": "Choisissez un moyen de paiement",
+    "yourAccount": "Votre compte {{provider}}",
+    "addAnotherCard": "Ajouter une autre carte",
+    "addAnotherNumber": "Ajouter un autre numéro",
+    "cardLast4Label": "4 derniers chiffres de la carte",
+    "phoneNumberLabel": "Numéro {{provider}}",
+    "cardPlaceholder": "Ex: 4242",
+    "phonePlaceholder": "Ex: 0102030405",
+    "amountLabel": "Montant (FCFA)",
+    "amountPlaceholder": "Ex: 5000",
+    "submit": "Recharger",
+    "capTitle": "Plafond de recharge atteint",
+    "capText": "Tant que votre KYC n'est pas validé, les recharges cumulées sont limitées à 10 000 FCFA. Complétez votre KYC pour lever ce plafond.",
+    "completeKyc": "Compléter mon KYC",
+    "successTitle": "Recharge réussie",
+    "successAdded": "{{amount}} ajoutés via {{provider}}.",
+    "successNewBalance": "Nouveau solde : {{balance}}",
+    "errors": {
+      "chooseMethodRequired": "Choisissez un moyen de recharge.",
+      "registerFirst": "Enregistrez d'abord votre {{provider}} avant de recharger.",
+      "invalidAmount": "Saisissez un montant valide.",
+      "genericError": "Recharge impossible.",
+      "methodsLoadError": "Impossible de charger vos moyens de paiement.",
+      "last4Required": "Saisissez exactement les 4 derniers chiffres de la carte.",
+      "numberRequired": "Saisissez le numéro associé à ce compte.",
+      "methodSaveError": "Impossible d'enregistrer ce moyen de paiement."
+    }
+  },
+  "transfer": {
+    "title": "Transférer",
+    "recipientLabel": "Numéro AfriPay du destinataire",
+    "recipientPlaceholder": "Ex: 0102030405",
+    "amountLabel": "Montant (FCFA)",
+    "amountPlaceholder": "Ex: 2000",
+    "noteLabel": "Note (optionnelle)",
+    "notePlaceholder": "Ex: Pour le loyer",
+    "pinNote": "Ce montant nécessite votre code PIN AfriPay (obligatoire à partir de {{amount}}).",
+    "pinLabel": "Code PIN",
+    "submit": "Envoyer",
+    "successTitle": "Transfert envoyé",
+    "successText": "{{amount}} — réf. {{reference}}",
+    "errors": {
+      "recipientRequired": "Saisissez le numéro AfriPay du destinataire.",
+      "invalidAmount": "Saisissez un montant valide.",
+      "pinRequired": "Votre code PIN est requis pour les transferts à partir de {{amount}}.",
+      "genericError": "Transfert impossible."
+    }
+  },
+  "support": {
+    "title": "Obtenir de l'aide",
+    "faqSectionLabel": "Questions fréquentes",
+    "faq": [
+      {
+        "q": "Comment recharger mon compte AfriPay ?",
+        "a": "Depuis le tableau de bord, appuyez sur \"Recharger\", choisissez Wave, Orange Money, Moov Money, MTN MoMo, Djamo ou une carte Visa, puis saisissez le montant."
+      },
+      {
+        "q": "Pourquoi mes recharges sont-elles plafonnées à 10 000 FCFA ?",
+        "a": "Tant que votre dossier KYC n'est pas validé, la réglementation limite le cumul de vos recharges à 10 000 FCFA. Complétez votre KYC pour lever ce plafond."
+      },
+      {
+        "q": "Comment payer un marchand sans espèces ?",
+        "a": "Ouvrez l'onglet \"Payer\" et présentez votre QR code AfriPay au terminal du marchand. C'est l'équivalent numérique de la présentation de votre paume."
+      },
+      {
+        "q": "Quand dois-je saisir mon code PIN ?",
+        "a": "Le code PIN AfriPay est requis pour confirmer tout transfert de 50 000 FCFA ou plus."
+      },
+      {
+        "q": "Un problème avec une transaction ?",
+        "a": "Contactez le support AfriPay au +225 00 00 00 00 ou support@afripay.africa."
+      }
+    ]
+  },
+  "appareils": {
+    "title": "Appareils connectés",
+    "subtitle": "Liste des appareils actuellement connectés à votre compte AfriPay. Déconnectez tout appareil que vous ne reconnaissez pas.",
+    "empty": "Aucun appareil actif trouvé.",
+    "unknownDevice": "Appareil inconnu",
+    "thisDevice": "Cet appareil",
+    "lastActivity": "Dernière activité : {{date}}",
+    "revokeConfirmTitle": "Déconnecter cet appareil",
+    "revokeConfirmText": "Voulez-vous déconnecter \"{{device}}\" ? Il devra se reconnecter pour accéder à votre compte.",
+    "revoke": "Déconnecter",
+    "revokeError": "Impossible de déconnecter cet appareil.",
+    "loadError": "Impossible de charger les appareils connectés."
+  },
+  "kyc": {
+    "home": {
+      "title": "Vérification d'identité (KYC)",
+      "stepLabel": "Étape {{current}} sur {{total}}",
+      "cumulativeRecharge": "Recharges cumulées (hors KYC validé) : {{amount}} / {{cap}}",
+      "statusRejected": "Votre dossier a été rejeté. Vous pouvez soumettre de nouveaux documents ci-dessous.",
+      "statusValidated": "Votre identité est vérifiée. Plafond de recharge levé.",
+      "statusPending": "Votre dossier est en cours d'examen par notre équipe back-office.",
+      "stepsLabel": "Étapes",
+      "step1Title": "1. Informations personnelles",
+      "step1Subtitle": "Nom, date de naissance, adresse",
+      "step2Title": "2. Pièce d'identité",
+      "step2Subtitle": "CNI, passeport ou carte de séjour",
+      "step2NavTitle": "Pièce d'identité",
+      "step3Title": "3. Selfie",
+      "step3Subtitle": "Photo de votre visage",
+      "step3NavTitle": "Selfie",
+      "step4Title": "4. Enrôlement du paiement",
+      "step4Subtitle": "Génère votre code de paiement AfriPay",
+      "loadError": "Impossible de charger votre statut KYC."
+    },
+    "info": {
+      "title": "Informations personnelles",
+      "nameLabel": "Nom",
+      "firstNameLabel": "Prénom",
+      "birthDateLabel": "Date de naissance",
+      "birthDatePlaceholder": "AAAA-MM-JJ",
+      "addressLabel": "Adresse",
+      "addressPlaceholder": "Ville, quartier...",
+      "save": "Enregistrer",
+      "saveError": "Impossible d'enregistrer vos informations."
+    },
+    "document": {
+      "defaultTitle": "Pièce d'identité",
+      "docTypeLabel": "Type de document",
+      "optionCni": "Carte d'identité",
+      "optionPassport": "Passeport",
+      "optionResidencePermit": "Carte de séjour",
+      "selfieHint": "Prenez une photo claire de votre visage, bien éclairée.",
+      "noPhoto": "Aucune photo sélectionnée",
+      "camera": "Caméra",
+      "gallery": "Galerie",
+      "send": "Envoyer le document",
+      "sent": "Document envoyé",
+      "cameraPermission": "Autorisez l'accès à la caméra pour prendre une photo.",
+      "galleryPermission": "Autorisez l'accès à la galerie pour choisir une photo.",
+      "photoRequired": "Ajoutez une photo avant de continuer.",
+      "sendError": "Échec de l'envoi du document."
+    },
+    "enroll": {
+      "title": "Enrôlement de la paume",
+      "subtitle": "Dernière étape : nous générons votre code de paiement AfriPay, l'équivalent numérique de votre paume, utilisé pour payer chez les marchands sans espèces ni carte.",
+      "capturing": "Capture en cours...",
+      "readyTitle": "Votre code de paiement AfriPay est prêt",
+      "readyText": "Rendez-vous sur l'onglet \"Payer\" pour présenter votre QR code aux marchands AfriPay.",
+      "viewCode": "Voir mon code de paiement",
+      "regenerate": "Régénérer le code",
+      "infoText": "Placez votre main devant la caméra et suivez les instructions pour générer votre code de paiement.",
+      "launch": "Lancer l'enrôlement",
+      "error": "L'enrôlement a échoué."
+    }
+  },
+  "appLockGate": {
+    "title": "AfriPay verrouillé",
+    "subtitle": "Authentifiez-vous pour accéder à votre compte.",
+    "unlock": "Déverrouiller",
+    "authCancelled": "Authentification annulée ou échouée.",
+    "authUnavailable": "Impossible de vérifier votre identité sur cet appareil.",
+    "promptMessage": "Déverrouiller AfriPay",
+    "promptCancelLabel": "Annuler"
+  },
+  "brand": {
+    "tagline": "Payez. Envoyez. Progressez."
+  },
+  "about": {
+    "title": "À propos",
+    "version": "Version {{version}}",
+    "description": "AfriPay est votre portefeuille mobile pour recharger votre compte, transférer de l'argent et payer chez les commerçants partenaires — y compris par reconnaissance de la paume de la main.",
+    "contactLabel": "Contact",
+    "emailLabel": "Nous écrire",
+    "shareMenu": "Partager l'application",
+    "shareMessage": "Découvrez AfriPay, l'application qui permet de recharger son compte, transférer de l'argent et payer chez les commerçants — même par reconnaissance de la paume de la main ! 🚀"
+  },
+  "terms": {
+    "title": "Conditions générales d'utilisation",
+    "lastUpdated": "Dernière mise à jour : 23 septembre 2026",
+    "intro": "Les présentes conditions générales encadrent l'utilisation de l'application AfriPay. Ce document est fourni à titre informatif dans le cadre de ce projet et devrait être revu par un conseil juridique avant toute mise en production.",
+    "sections": [
+      {
+        "title": "1. Objet",
+        "body": "AfriPay est une application de paiement mobile permettant de recharger un compte, transférer de l'argent et régler des achats chez des commerçants partenaires, y compris par reconnaissance de la paume de la main."
+      },
+      {
+        "title": "2. Acceptation des conditions",
+        "body": "En créant un compte ou en utilisant l'application, vous acceptez sans réserve les présentes conditions générales d'utilisation."
+      },
+      {
+        "title": "3. Création de compte et vérification d'identité",
+        "body": "Vous devez fournir des informations exactes et à jour lors de votre inscription. Certaines fonctionnalités, notamment le relèvement du plafond de recharge, nécessitent la validation de votre dossier KYC (pièce d'identité, selfie)."
+      },
+      {
+        "title": "4. Sécurité du compte",
+        "body": "Vous êtes responsable de la confidentialité de votre code PIN et de vos identifiants de connexion. Toute activité suspecte doit être signalée immédiatement. Vous pouvez consulter et révoquer vos appareils connectés depuis les paramètres."
+      },
+      {
+        "title": "5. Transactions et moyens de paiement",
+        "body": "Les recharges, transferts et paiements peuvent transiter par des prestataires tiers (Wave, Orange Money, Moov Money, MTN MoMo, Djamo, cartes Visa). Des frais éventuels vous seront indiqués avant la confirmation de toute opération."
+      },
+      {
+        "title": "6. Paiement par reconnaissance de la paume",
+        "body": "L'enrôlement biométrique est facultatif mais nécessaire pour utiliser le paiement par paume. Votre gabarit biométrique est chiffré et utilisé exclusivement à des fins d'authentification de paiement."
+      },
+      {
+        "title": "7. Suspension et clôture de compte",
+        "body": "AfriPay peut suspendre ou clôturer un compte en cas de fraude, de non-respect des présentes conditions, ou pour se conformer à une obligation légale ou réglementaire."
+      },
+      {
+        "title": "8. Limitation de responsabilité",
+        "body": "AfriPay ne saurait être tenu responsable des interruptions de service, des pannes de prestataires tiers, ou des pertes résultant d'une négligence de l'utilisateur dans la protection de ses identifiants."
+      },
+      {
+        "title": "9. Modification des conditions",
+        "body": "Les présentes conditions peuvent être modifiées à tout moment. Vous serez informé de tout changement important via l'application."
+      },
+      {
+        "title": "10. Contact",
+        "body": "Pour toute question relative à ces conditions, contactez-nous à l'adresse indiquée dans la section « À propos »."
+      }
+    ]
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : 23 septembre 2026",
+    "intro": "Cette politique décrit comment AfriPay collecte, utilise et protège vos données personnelles. Ce document est fourni à titre informatif dans le cadre de ce projet et devrait être revu par un conseil juridique avant toute mise en production.",
+    "sections": [
+      {
+        "title": "1. Données collectées",
+        "body": "Nous collectons vos informations d'identité (nom, prénom, téléphone, email, date de naissance, adresse), vos documents KYC (pièce d'identité, selfie), votre gabarit biométrique chiffré, ainsi que l'historique de vos transactions et les informations de vos appareils connectés."
+      },
+      {
+        "title": "2. Finalités du traitement",
+        "body": "Ces données servent à créer et sécuriser votre compte, respecter nos obligations réglementaires de lutte contre la fraude et le blanchiment (KYC/AML), traiter vos paiements, et vous apporter une assistance."
+      },
+      {
+        "title": "3. Base légale",
+        "body": "Le traitement repose sur l'exécution du contrat qui nous lie à vous, le respect de nos obligations légales et réglementaires, ainsi que votre consentement explicite pour l'enrôlement biométrique."
+      },
+      {
+        "title": "4. Conservation des données",
+        "body": "Vos données sont conservées pendant la durée de votre compte actif, puis pour la durée requise par la réglementation applicable aux documents KYC et aux transactions financières."
+      },
+      {
+        "title": "5. Partage des données",
+        "body": "Vos données peuvent être partagées avec nos partenaires de paiement (Wave, Orange Money, Moov Money, MTN MoMo, Djamo) dans la stricte mesure nécessaire au traitement de vos opérations, ou avec les autorités compétentes si la loi l'exige. Elles ne sont jamais vendues à des tiers."
+      },
+      {
+        "title": "6. Sécurité des données",
+        "body": "Votre code PIN est stocké sous forme chiffrée, votre gabarit biométrique est chiffré, et l'accès à vos données est protégé et journalisé."
+      },
+      {
+        "title": "7. Vos droits",
+        "body": "Vous disposez d'un droit d'accès, de rectification et de suppression de vos données, dans la limite des obligations légales de conservation. Vous pouvez exercer ces droits en nous contactant à l'adresse indiquée dans la section « À propos »."
+      },
+      {
+        "title": "8. Modifications de la politique",
+        "body": "Cette politique peut être mise à jour. Vous serez informé de tout changement important via l'application."
+      }
+    ]
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "phoneLabel": "Numéro de téléphone",
+      "phonePlaceholder": "Ex: 0102030405",
+      "passwordLabel": "Mot de passe",
+      "submit": "Se connecter",
+      "noAccount": "Pas encore de compte ?",
+      "createAccount": "Créer un compte",
+      "missingFields": "Veuillez renseigner votre numéro et votre mot de passe.",
+      "error": "Connexion impossible."
+    },
+    "otp": {
+      "title": "Vérification",
+      "subtitle": "Un code a été envoyé au {{phone}}.",
+      "devModeTitle": "Mode développement",
+      "devModeText": "Aucun SMS réel n'est envoyé hors production. Code de test :",
+      "codeLabel": "Code de vérification",
+      "continue": "Continuer",
+      "missingCode": "Veuillez saisir le code reçu par SMS."
+    },
+    "pinSetup": {
+      "titleChange": "Modifier votre PIN",
+      "titleCreate": "Créez votre code PIN",
+      "titleConfirm": "Confirmez votre code PIN",
+      "subtitleCreate": "Ce code à 4 chiffres vous sera demandé pour confirmer les transferts de 50 000 FCFA ou plus.",
+      "subtitleConfirm": "Saisissez à nouveau le même code pour le confirmer.",
+      "mismatchError": "Les codes PIN ne correspondent pas. Recommencez.",
+      "saveError": "Impossible d'enregistrer le PIN."
+    },
+    "registerDetails": {
+      "title": "Vos informations",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Kouassi",
+      "firstNameLabel": "Prénom",
+      "firstNamePlaceholder": "Awa",
+      "emailLabel": "Email (optionnel)",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Au moins 6 caractères",
+      "confirmLabel": "Confirmer le mot de passe",
+      "submit": "Créer mon compte",
+      "missingFields": "Nom, prénom et mot de passe sont requis.",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "error": "Inscription impossible."
+    },
+    "registerPhone": {
+      "title": "Créer un compte",
+      "subtitle": "Saisissez votre numéro de téléphone. Nous vous enverrons un code de vérification.",
+      "phoneLabel": "Numéro de téléphone",
+      "phonePlaceholder": "Ex: 0102030405",
+      "submit": "Recevoir le code",
+      "orRegisterWith": "Ou s'inscrire avec",
+      "google": "Google",
+      "apple": "Apple",
+      "comingSoonTitle": "Bientôt disponible",
+      "comingSoonText": "L'inscription via {{provider}} arrive dans une prochaine version.",
+      "missingPhone": "Veuillez saisir votre numéro de téléphone.",
+      "error": "Impossible d'envoyer le code."
+    }
+  },
+  "status": {
+    "kyc": {
+      "validé": "Validé",
+      "rejeté": "Rejeté",
+      "suspendu": "Suspendu",
+      "en_attente": "En attente"
+    },
+    "tx": {
+      "réussi": "Réussi",
+      "en_attente": "En attente",
+      "échoué": "Échoué"
+    },
+    "kycLabel": "KYC : {{status}}"
+  },
+  "txType": {
+    "achat": "Achat",
+    "recharge": "Recharge",
+    "transfert": "Transfert"
+  },
+  "txMethod": {
+    "paume_de_main": "Paiement AfriPay (paume)",
+    "mobile_money": "Mobile Money",
+    "carte_visa": "Carte Visa",
+    "interne": "Transfert AfriPay"
+  },
+  "providers": {
+    "wave": "Wave",
+    "orange_money": "Orange Money",
+    "moov_money": "Moov Money",
+    "mtn_money": "MTN MoMo",
+    "djamo": "Djamo",
+    "visa": "Carte Visa"
+  }
+}

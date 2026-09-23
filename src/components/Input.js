@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Icon from './Icon';
 import { colors, radius } from '../theme/colors';
 
 export default function Input({ label, error, style, secureTextEntry, ...props }) {
+  const { t } = useTranslation();
   const [revealed, setRevealed] = useState(false);
   const isSecure = !!secureTextEntry;
 
@@ -22,7 +24,7 @@ export default function Input({ label, error, style, secureTextEntry, ...props }
             onPress={() => setRevealed((v) => !v)}
             hitSlop={10}
             style={styles.toggle}
-            accessibilityLabel={revealed ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+            accessibilityLabel={revealed ? t('common.hidePassword') : t('common.showPassword')}
           >
             <Icon name={revealed ? 'eye-slash' : 'eye'} size={16} color={colors.textSecondary} />
           </Pressable>

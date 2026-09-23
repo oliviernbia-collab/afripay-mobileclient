@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
+import { useTranslation } from 'react-i18next';
 import Card from '../components/Card';
 import GradientButton from '../components/GradientButton';
 import Icon from '../components/Icon';
@@ -14,6 +15,7 @@ import { formatFcfa } from '../utils/format';
 import { ApiError } from '../api/client';
 
 export default function PayerScreen({ navigation }) {
+  const { t } = useTranslation();
   const [palmCode, setPalmCode] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,12 +34,12 @@ export default function PayerScreen({ navigation }) {
       if (e instanceof ApiError && e.status === 404) {
         setNotEnrolled(true);
       } else {
-        setError(e.message || 'Impossible de charger votre code de paiement.');
+        setError(e.message || t('payer.loadError'));
       }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -48,21 +50,17 @@ export default function PayerScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.container}>
-        <Text style={styles.title}>Scan de paiement AfriPay</Text>
-        <Text style={styles.subtitle}>
-          Présentez ce code au terminal du marchand pour payer instantanément, sans espèces ni carte.
-        </Text>
+        <Text style={styles.title}>{t('payer.title')}</Text>
+        <Text style={styles.subtitle}>{t('payer.subtitle')}</Text>
 
         {loading ? (
           <ActivityIndicator color={colors.white} style={{ marginTop: 40 }} />
         ) : notEnrolled ? (
           <Card style={styles.enrollCard}>
-            <Text style={styles.enrollTitle}>Code de paiement non disponible</Text>
-            <Text style={styles.enrollText}>
-              Terminez votre parcours KYC (enrôlement de la paume) pour activer votre code de paiement AfriPay.
-            </Text>
+            <Text style={styles.enrollTitle}>{t('payer.codeUnavailableTitle')}</Text>
+            <Text style={styles.enrollText}>{t('payer.codeUnavailableText')}</Text>
             <GradientButton
-              title="Compléter mon KYC"
+              title={t('payer.completeKyc')}
               onPress={() => navigation.navigate('KycHome')}
               style={{ marginTop: 14 }}
             />
@@ -82,18 +80,18 @@ export default function PayerScreen({ navigation }) {
                 <Text style={styles.codeLabel}>{palmCode}</Text>
               </View>
             </LinearGradient>
-            <Text style={styles.scanHint}>Présentez votre paume pour payer</Text>
+            <Text style={styles.scanHint}>{t('payer.scanHint')}</Text>
 
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
             <Card style={styles.balanceCard}>
-              <Text style={styles.balanceLabel}>Solde disponible</Text>
+              <Text style={styles.balanceLabel}>{t('payer.balanceLabel')}</Text>
               <Text style={styles.balanceValue}>{wallet ? formatFcfa(wallet.solde) : '—'}</Text>
             </Card>
 
             <Pressable onPress={load} style={styles.refreshBtn}>
               <Icon name="arrows-rotate" size={13} color={colors.blue} />
-              <Text style={styles.refreshText}>Actualiser mon code</Text>
+              <Text style={styles.refreshText}>{t('payer.refresh')}</Text>
             </Pressable>
           </>
         )}

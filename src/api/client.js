@@ -2,6 +2,7 @@ import { File, UploadType } from 'expo-file-system';
 import { API_BASE_URL } from '../config/api';
 import { getAccessToken, getRefreshToken, saveTokens, clearTokens } from './tokenStore';
 import { getDeviceInfo } from '../utils/deviceInfo';
+import i18n from '../i18n';
 
 // Custom error carrying the HTTP status + backend message/details so screens
 // can branch on e.g. status === 403 (plafond recharge) without string-matching.
@@ -23,7 +24,7 @@ let refreshPromise = null;
 
 async function doRefresh() {
   const refreshToken = await getRefreshToken();
-  if (!refreshToken) throw new ApiError(401, 'Session expirée');
+  if (!refreshToken) throw new ApiError(401, i18n.t('common.sessionExpired'));
   const { appareil, os } = getDeviceInfo();
   const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
     method: 'POST',
@@ -32,7 +33,7 @@ async function doRefresh() {
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok || !json.success) {
-    throw new ApiError(res.status, json.message || 'Refresh échoué');
+    throw new ApiError(res.status, json.message || i18n.t('common.refreshFailed'));
   }
   await saveTokens(json.data);
   return json.data.accessToken;
@@ -86,12 +87,12 @@ export async function request(path, { method = 'GET', body, auth = true, isForm 
       refreshPromise = null;
       await clearTokens();
       if (onUnauthorized) onUnauthorized();
-      throw new ApiError(401, 'Session expirée, veuillez vous reconnecter');
+      throw new ApiError(401, i18n.t('common.sessionExpiredReconnect'));
     }
   }
 
   if (!res.ok || !json || json.success === false) {
-    const message = (json && json.message) || `Erreur réseau (${res.status})`;
+    const message = (json && json.message) || i18n.t('common.networkError', { status: res.status });
     throw new ApiError(res.status, message, json && json.details);
   }
 
@@ -100,6 +101,7 @@ export async function request(path, { method = 'GET', body, auth = true, isForm 
 
 export const get = (path, opts) => request(path, { ...opts, method: 'GET' });
 export const post = (path, body, opts) => request(path, { ...opts, method: 'POST', body });
+export const patch = (path, body, opts) => request(path, { ...opts, method: 'PATCH', body });
 export const del = (path, opts) => request(path, { ...opts, method: 'DELETE' });
 
 /**
@@ -151,12 +153,12 @@ export async function uploadFile(path, { uri, fieldName, mimeType, parameters, a
       refreshPromise = null;
       await clearTokens();
       if (onUnauthorized) onUnauthorized();
-      throw new ApiError(401, 'Session expirée, veuillez vous reconnecter');
+      throw new ApiError(401, i18n.t('common.sessionExpiredReconnect'));
     }
   }
 
   if (result.status < 200 || result.status >= 300 || !json || json.success === false) {
-    const message = (json && json.message) || `Erreur réseau (${result.status})`;
+    const message = (json && json.message) || i18n.t('common.networkError', { status: result.status });
     throw new ApiError(result.status, message, json && json.details);
   }
 

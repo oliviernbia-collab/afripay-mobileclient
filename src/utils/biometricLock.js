@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
+import i18n from '../i18n';
 
 // "Option d'authentification biométrique locale du téléphone (empreinte digitale / Face ID)
 // pour l'ouverture de l'application" (cahier des charges 5.1/5.6) — distinct de la biométrie
@@ -29,8 +30,8 @@ export async function getBiometricCapability() {
 
 export async function promptBiometricUnlock() {
   const result = await LocalAuthentication.authenticateAsync({
-    promptMessage: 'Déverrouiller AfriPay',
-    cancelLabel: 'Annuler',
+    promptMessage: i18n.t('appLockGate.promptMessage'),
+    cancelLabel: i18n.t('appLockGate.promptCancelLabel'),
     disableDeviceFallback: false, // autorise le code de l'appareil en secours (cf. 4.4 "procédure de secours")
   });
   return result.success;

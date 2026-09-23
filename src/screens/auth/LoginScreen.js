@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import BrandHeader from '../../components/BrandHeader';
 import Input from '../../components/Input';
@@ -9,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { colors } from '../../theme/colors';
 
 export default function LoginScreen({ navigation }) {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const [telephone, setTelephone] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
@@ -18,7 +20,7 @@ export default function LoginScreen({ navigation }) {
   const onSubmit = async () => {
     setError('');
     if (!telephone || !motDePasse) {
-      setError('Veuillez renseigner votre numéro et votre mot de passe.');
+      setError(t('auth.login.missingFields'));
       return;
     }
     setLoading(true);
@@ -26,7 +28,7 @@ export default function LoginScreen({ navigation }) {
       await login(telephone.trim(), motDePasse);
       // Navigation switches automatically once `user` is set in AuthContext.
     } catch (e) {
-      setError(e.message || 'Connexion impossible.');
+      setError(e.message || t('auth.login.error'));
     } finally {
       setLoading(false);
     }
@@ -38,30 +40,30 @@ export default function LoginScreen({ navigation }) {
         <BrandHeader size="large" />
       </View>
 
-      <Text style={styles.title}>Connexion</Text>
+      <Text style={styles.title}>{t('auth.login.title')}</Text>
       <ErrorBanner message={error} />
 
       <Input
-        label="Numéro de téléphone"
-        placeholder="Ex: 0102030405"
+        label={t('auth.login.phoneLabel')}
+        placeholder={t('auth.login.phonePlaceholder')}
         keyboardType="phone-pad"
         value={telephone}
         onChangeText={setTelephone}
         autoCapitalize="none"
       />
       <Input
-        label="Mot de passe"
+        label={t('auth.login.passwordLabel')}
         placeholder="••••••••"
         secureTextEntry
         value={motDePasse}
         onChangeText={setMotDePasse}
       />
 
-      <GradientButton title="Se connecter" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <GradientButton title={t('auth.login.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
 
       <Pressable onPress={() => navigation.navigate('RegisterPhone')} style={{ marginTop: 20 }}>
         <Text style={styles.link}>
-          Pas encore de compte ? <Text style={styles.linkStrong}>Créer un compte</Text>
+          {t('auth.login.noAccount')} <Text style={styles.linkStrong}>{t('auth.login.createAccount')}</Text>
         </Text>
       </Pressable>
     </ScreenContainer>

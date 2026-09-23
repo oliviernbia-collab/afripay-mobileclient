@@ -6,6 +6,9 @@ import RechargeScreen from '../screens/RechargeScreen';
 import TransferScreen from '../screens/TransferScreen';
 import HistoriqueDetailScreen from '../screens/HistoriqueDetailScreen';
 import SupportScreen from '../screens/SupportScreen';
+import AboutScreen from '../screens/AboutScreen';
+import TermsScreen from '../screens/TermsScreen';
+import PrivacyScreen from '../screens/PrivacyScreen';
 import PinSetupScreen from '../screens/auth/PinSetupScreen';
 import KycHomeScreen from '../screens/kyc/KycHomeScreen';
 import KycInfoScreen from '../screens/kyc/KycInfoScreen';
@@ -31,6 +34,9 @@ export default function MainStack() {
       <Stack.Screen name="Transfer" component={TransferScreen} options={{ title: '' }} />
       <Stack.Screen name="HistoriqueDetail" component={HistoriqueDetailScreen} options={{ title: '' }} />
       <Stack.Screen name="Support" component={SupportScreen} options={{ title: '' }} />
+      <Stack.Screen name="About" component={AboutScreen} options={{ title: '' }} />
+      <Stack.Screen name="Terms" component={TermsScreen} options={{ title: '' }} />
+      <Stack.Screen name="Privacy" component={PrivacyScreen} options={{ title: '' }} />
       <Stack.Screen name="PinSetup" component={PinSetupScreen} options={{ title: '' }} />
       <Stack.Screen name="KycHome" component={KycHomeScreen} options={{ title: '' }} />
       <Stack.Screen name="KycInfo" component={KycInfoScreen} options={{ title: '' }} />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import GradientButton from '../../components/GradientButton';
 import ErrorBanner from '../../components/ErrorBanner';
@@ -9,16 +10,17 @@ import Icon from '../../components/Icon';
 import { uploadDocument } from '../../api/kyc';
 import { colors, radius } from '../../theme/colors';
 
-const ID_DOC_OPTIONS = [
-  { key: 'cni', label: "Carte d'identité" },
-  { key: 'passeport', label: 'Passeport' },
-  { key: 'carte_sejour', label: 'Carte de séjour' },
-];
-
 export default function KycDocumentScreen({ route, navigation }) {
+  const { t } = useTranslation();
+  const ID_DOC_OPTIONS = [
+    { key: 'cni', label: t('kyc.document.optionCni') },
+    { key: 'passeport', label: t('kyc.document.optionPassport') },
+    { key: 'carte_sejour', label: t('kyc.document.optionResidencePermit') },
+  ];
+
   const initialType = route.params?.typeDocument || 'cni';
   const isSelfie = initialType === 'selfie';
-  const title = route.params?.title || "Pièce d'identité";
+  const title = route.params?.title || t('kyc.document.defaultTitle');
 
   const [typeDocument, setTypeDocument] = useState(initialType);
   const [imageUri, setImageUri] = useState(null);
@@ -29,7 +31,7 @@ export default function KycDocumentScreen({ route, navigation }) {
   const pickFromCamera = async () => {
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
-      setError("Autorisez l'accès à la caméra pour prendre une photo.");
+      setError(t('kyc.document.cameraPermission'));
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -43,7 +45,7 @@ export default function KycDocumentScreen({ route, navigation }) {
   const pickFromGallery = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      setError("Autorisez l'accès à la galerie pour choisir une photo.");
+      setError(t('kyc.document.galleryPermission'));
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -57,7 +59,7 @@ export default function KycDocumentScreen({ route, navigation }) {
   const onSubmit = async () => {
     setError('');
     if (!imageUri) {
-      setError('Ajoutez une photo avant de continuer.');
+      setError(t('kyc.document.photoRequired'));
       return;
     }
     setLoading(true);
@@ -66,7 +68,7 @@ export default function KycDocumentScreen({ route, navigation }) {
       setSuccess(true);
       setTimeout(() => navigation.goBack(), 900);
     } catch (e) {
-      setError(e.message || "Échec de l'envoi du document.");
+      setError(e.message || t('kyc.document.sendError'));
     } finally {
       setLoading(false);
     }
@@ -79,13 +81,13 @@ export default function KycDocumentScreen({ route, navigation }) {
       {success ? (
         <View style={styles.successRow}>
           <Icon name="circle-check" size={16} color={colors.success} />
-          <Text style={styles.successText}>Document envoyé</Text>
+          <Text style={styles.successText}>{t('kyc.document.sent')}</Text>
         </View>
       ) : null}
 
       {!isSelfie ? (
         <>
-          <Text style={styles.sectionLabel}>Type de document</Text>
+          <Text style={styles.sectionLabel}>{t('kyc.document.docTypeLabel')}</Text>
           <View style={styles.chipsRow}>
             {ID_DOC_OPTIONS.map((o) => (
               <Pressable
@@ -99,23 +101,23 @@ export default function KycDocumentScreen({ route, navigation }) {
           </View>
         </>
       ) : (
-        <Text style={styles.hint}>Prenez une photo claire de votre visage, bien éclairée.</Text>
+        <Text style={styles.hint}>{t('kyc.document.selfieHint')}</Text>
       )}
 
       <Card style={styles.previewCard}>
         {imageUri ? (
           <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
         ) : (
-          <Text style={styles.placeholderText}>Aucune photo sélectionnée</Text>
+          <Text style={styles.placeholderText}>{t('kyc.document.noPhoto')}</Text>
         )}
       </Card>
 
       <View style={styles.actionsRow}>
-        <GradientButton title="Caméra" onPress={pickFromCamera} variant="outline" style={{ flex: 1, marginRight: 8 }} />
-        <GradientButton title="Galerie" onPress={pickFromGallery} variant="outline" style={{ flex: 1, marginLeft: 8 }} />
+        <GradientButton title={t('kyc.document.camera')} onPress={pickFromCamera} variant="outline" style={{ flex: 1, marginRight: 8 }} />
+        <GradientButton title={t('kyc.document.gallery')} onPress={pickFromGallery} variant="outline" style={{ flex: 1, marginLeft: 8 }} />
       </View>
 
-      <GradientButton title="Envoyer le document" onPress={onSubmit} loading={loading} style={{ marginTop: 16 }} />
+      <GradientButton title={t('kyc.document.send')} onPress={onSubmit} loading={loading} style={{ marginTop: 16 }} />
     </ScreenContainer>
   );
 }

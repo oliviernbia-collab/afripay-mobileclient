@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors } from '../theme/colors';
 
 // Official AfriPay logo (see DESIGN_TOKENS.md §Logo). Resized copies live in
@@ -14,6 +15,7 @@ const LOGO_COMPACT = require('../../assets/logo-compact.png');
  * (size="compact").
  */
 export default function BrandHeader({ size = 'large', showTagline = true, style }) {
+  const { t } = useTranslation();
   const isLarge = size === 'large';
   const logoWidth = isLarge ? 220 : 120;
   const logoHeight = isLarge ? 188 : 102; // matches source aspect ratio (~1.17:1)
@@ -26,7 +28,7 @@ export default function BrandHeader({ size = 'large', showTagline = true, style 
         resizeMode="contain"
         accessibilityLabel="AfriPay"
       />
-      {showTagline ? <Text style={styles.tagline}>Payez. Envoyez. Progressez.</Text> : null}
+      {showTagline ? <Text style={styles.tagline}>{t('brand.tagline')}</Text> : null}
     </View>
   );
 }

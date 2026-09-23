@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../components/ScreenContainer';
 import Input from '../components/Input';
 import GradientButton from '../components/GradientButton';
@@ -12,6 +13,7 @@ import { formatFcfa } from '../utils/format';
 const PIN_THRESHOLD = 50000;
 
 export default function TransferScreen({ navigation }) {
+  const { t } = useTranslation();
   const [telephoneDestinataire, setTelephoneDestinataire] = useState('');
   const [montant, setMontant] = useState('');
   const [libelle, setLibelle] = useState('');
@@ -27,15 +29,15 @@ export default function TransferScreen({ navigation }) {
     setError('');
     setSuccess(null);
     if (!telephoneDestinataire.trim()) {
-      setError('Saisissez le numéro AfriPay du destinataire.');
+      setError(t('transfer.errors.recipientRequired'));
       return;
     }
     if (!amount || amount <= 0) {
-      setError('Saisissez un montant valide.');
+      setError(t('transfer.errors.invalidAmount'));
       return;
     }
     if (needsPin && !/^\d{4,6}$/.test(pin)) {
-      setError(`Votre code PIN est requis pour les transferts à partir de ${formatFcfa(PIN_THRESHOLD)}.`);
+      setError(t('transfer.errors.pinRequired', { amount: formatFcfa(PIN_THRESHOLD) }));
       return;
     }
     setLoading(true);
@@ -51,7 +53,7 @@ export default function TransferScreen({ navigation }) {
       setLibelle('');
       setPin('');
     } catch (e) {
-      setError(e.message || 'Transfert impossible.');
+      setError(e.message || t('transfer.errors.genericError'));
     } finally {
       setLoading(false);
     }
@@ -59,44 +61,44 @@ export default function TransferScreen({ navigation }) {
 
   return (
     <ScreenContainer scroll>
-      <Text style={styles.title}>Transférer</Text>
+      <Text style={styles.title}>{t('transfer.title')}</Text>
       <ErrorBanner message={error} />
 
       {success ? (
         <Card style={styles.successCard}>
-          <Text style={styles.successTitle}>Transfert envoyé</Text>
-          <Text style={styles.successText}>{formatFcfa(success.montant)} — réf. {success.reference}</Text>
+          <Text style={styles.successTitle}>{t('transfer.successTitle')}</Text>
+          <Text style={styles.successText}>
+            {t('transfer.successText', { amount: formatFcfa(success.montant), reference: success.reference })}
+          </Text>
         </Card>
       ) : null}
 
       <Input
-        label="Numéro AfriPay du destinataire"
-        placeholder="Ex: 0102030405"
+        label={t('transfer.recipientLabel')}
+        placeholder={t('transfer.recipientPlaceholder')}
         keyboardType="phone-pad"
         value={telephoneDestinataire}
         onChangeText={setTelephoneDestinataire}
       />
       <Input
-        label="Montant (FCFA)"
-        placeholder="Ex: 2000"
+        label={t('transfer.amountLabel')}
+        placeholder={t('transfer.amountPlaceholder')}
         keyboardType="number-pad"
         value={montant}
         onChangeText={setMontant}
       />
       <Input
-        label="Note (optionnelle)"
-        placeholder="Ex: Pour le loyer"
+        label={t('transfer.noteLabel')}
+        placeholder={t('transfer.notePlaceholder')}
         value={libelle}
         onChangeText={setLibelle}
       />
 
       {needsPin ? (
         <>
-          <Text style={styles.pinNote}>
-            Ce montant nécessite votre code PIN AfriPay (obligatoire à partir de {formatFcfa(PIN_THRESHOLD)}).
-          </Text>
+          <Text style={styles.pinNote}>{t('transfer.pinNote', { amount: formatFcfa(PIN_THRESHOLD) })}</Text>
           <Input
-            label="Code PIN"
+            label={t('transfer.pinLabel')}
             placeholder="••••"
             keyboardType="number-pad"
             secureTextEntry
@@ -107,7 +109,7 @@ export default function TransferScreen({ navigation }) {
         </>
       ) : null}
 
-      <GradientButton title="Envoyer" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <GradientButton title={t('transfer.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
     </ScreenContainer>
   );
 }

@@ -3,19 +3,20 @@ import { View, StyleSheet } from 'react-native';
 import Icon from './Icon';
 import { colors } from '../theme/colors';
 
-const TYPE_STYLE = {
-  recharge: { icon: 'arrow-up', color: colors.green },
-  achat: { icon: 'arrow-down', color: colors.red },
-  transfert: { icon: 'right-left', color: colors.blue },
-};
-
 /**
  * Small colored round icon avatar for a transaction/notification type —
  * matches the icon-avatar rows used in Historique/Dashboard/Notifications
- * in the mockup.
+ * in the mockup. `credit` (money coming into the wallet vs going out) drives
+ * the arrow direction/color for recharge/achat/transfert alike, so a
+ * transfert reçu and a transfert envoyé are visually distinguishable.
  */
-export default function TxTypeIcon({ type, size = 36 }) {
-  const { icon, color } = TYPE_STYLE[type] || { icon: 'money-bill-wave', color: colors.turquoise };
+export default function TxTypeIcon({ type, credit, size = 36 }) {
+  let icon = 'money-bill-wave';
+  let color = colors.turquoise;
+  if (type === 'recharge' || type === 'achat' || type === 'transfert') {
+    icon = credit ? 'arrow-up' : 'arrow-down';
+    color = credit ? colors.green : colors.red;
+  }
   return (
     <View
       style={[

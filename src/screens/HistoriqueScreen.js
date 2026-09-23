@@ -2,24 +2,25 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Card from '../components/Card';
 import TxTypeIcon from '../components/TxTypeIcon';
-import { getMyHistory } from '../api/wallet';
-import { colors, radius, statutColor, txTypeLabel, txMethodLabel } from '../theme/colors';
+import { getMyHistory, getMyWallet } from '../api/wallet';
+import { colors, radius, statutColor, statutLabel, txDisplayTitle, txMethodLabel } from '../theme/colors';
 import { formatFcfa, formatDate } from '../utils/format';
 
 const TYPE_CHIPS = [
-  { key: undefined, label: 'Toutes' },
-  { key: 'achat', label: 'Achats' },
-  { key: 'recharge', label: 'Recharges' },
-  { key: 'transfert', label: 'Transferts' },
+  { key: undefined, labelKey: 'historique.typeAll' },
+  { key: 'achat', labelKey: 'historique.typePurchases' },
+  { key: 'recharge', labelKey: 'historique.typeRecharges' },
+  { key: 'transfert', labelKey: 'historique.typeTransfers' },
 ];
 
 const STATUT_CHIPS = [
-  { key: undefined, label: 'Tous statuts' },
-  { key: 'réussi', label: 'Réussi' },
-  { key: 'en_attente', label: 'En attente' },
-  { key: 'échoué', label: 'Échoué' },
+  { key: undefined, labelKey: 'historique.statusAll' },
+  { key: 'réussi', labelKey: 'historique.statusSuccess' },
+  { key: 'en_attente', labelKey: 'historique.statusPending' },
+  { key: 'échoué', labelKey: 'historique.statusFailed' },
 ];
 
 // Filtre par période (cahier des charges 5.5 "Filtres par type d'opération, période et
@@ -43,14 +44,16 @@ function periodRange(key) {
 }
 
 const PERIOD_CHIPS = [
-  { key: undefined, label: 'Toute période' },
-  { key: 'jour', label: "Aujourd'hui" },
-  { key: '7j', label: '7 derniers jours' },
-  { key: 'mois', label: 'Ce mois' },
+  { key: undefined, labelKey: 'historique.periodAll' },
+  { key: 'jour', labelKey: 'historique.periodToday' },
+  { key: '7j', labelKey: 'historique.periodLast7' },
+  { key: 'mois', labelKey: 'historique.periodThisMonth' },
 ];
 
 export default function HistoriqueScreen({ navigation }) {
+  const { t } = useTranslation();
   const [items, setItems] = useState([]);
+  const [walletId, setWalletId] = useState(null);
   const [type, setType] = useState(undefined);
   const [statut, setStatut] = useState(undefined);
   const [period, setPeriod] = useState(undefined);
@@ -61,12 +64,16 @@ export default function HistoriqueScreen({ navigation }) {
   const load = useCallback(async (filters) => {
     setError('');
     try {
-      const data = await getMyHistory({ type: filters.type, statut: filters.statut, ...periodRange(filters.period), limit: 100 });
+      const [data, wallet] = await Promise.all([
+        getMyHistory({ type: filters.type, statut: filters.statut, ...periodRange(filters.period), limit: 100 }),
+        getMyWallet(),
+      ]);
       setItems(data);
+      setWalletId(wallet.id);
     } catch (e) {
-      setError(e.message || 'Impossible de charger l’historique.');
+      setError(e.message || t('historique.loadError'));
     }
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -91,22 +98,22 @@ export default function HistoriqueScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.title}>Historique</Text>
+        <Text style={styles.title}>{t('historique.title')}</Text>
       </View>
 
       <View style={styles.chipsRow}>
         {TYPE_CHIPS.map((c) => (
-          <Chip key={c.label} label={c.label} active={type === c.key} onPress={() => setType(c.key)} />
+          <Chip key={c.labelKey} label={t(c.labelKey)} active={type === c.key} onPress={() => setType(c.key)} />
         ))}
       </View>
       <View style={styles.chipsRow}>
         {STATUT_CHIPS.map((c) => (
-          <Chip key={c.label} label={c.label} active={statut === c.key} onPress={() => setStatut(c.key)} />
+          <Chip key={c.labelKey} label={t(c.labelKey)} active={statut === c.key} onPress={() => setStatut(c.key)} />
         ))}
       </View>
       <View style={styles.chipsRow}>
         {PERIOD_CHIPS.map((c) => (
-          <Chip key={c.label} label={c.label} active={period === c.key} onPress={() => setPeriod(c.key)} />
+          <Chip key={c.labelKey} label={t(c.labelKey)} active={period === c.key} onPress={() => setPeriod(c.key)} />
         ))}
       </View>
 
@@ -120,26 +127,29 @@ export default function HistoriqueScreen({ navigation }) {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
-          ListEmptyComponent={<Text style={styles.emptyText}>Aucune transaction trouvée.</Text>}
-          renderItem={({ item }) => (
-            <Pressable onPress={() => navigation.navigate('HistoriqueDetail', { transaction: item })}>
-              <Card style={styles.row}>
-                <TxTypeIcon type={item.type} />
-                <View style={{ flex: 1, marginLeft: 12 }}>
-                  <Text style={styles.rowTitle}>{item.libelle || txTypeLabel(item.type)}</Text>
-                  <Text style={styles.rowSubtitle}>{txMethodLabel(item.méthode)}</Text>
-                  <Text style={styles.rowDate}>{formatDate(item.date_heure)}</Text>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <Text style={[styles.rowAmount, { color: item.type === 'recharge' ? colors.green : colors.white }]}>
-                    {item.type === 'recharge' ? '+' : '-'}
-                    {formatFcfa(item.montant)}
-                  </Text>
-                  <Text style={[styles.rowStatus, { color: statutColor(item.statut) }]}>{item.statut}</Text>
-                </View>
-              </Card>
-            </Pressable>
-          )}
+          ListEmptyComponent={<Text style={styles.emptyText}>{t('historique.empty')}</Text>}
+          renderItem={({ item }) => {
+            const credit = item.wallet_destination_id === walletId;
+            return (
+              <Pressable onPress={() => navigation.navigate('HistoriqueDetail', { transaction: item, walletId })}>
+                <Card style={styles.row}>
+                  <TxTypeIcon type={item.type} credit={credit} />
+                  <View style={{ flex: 1, marginLeft: 12 }}>
+                    <Text style={styles.rowTitle} numberOfLines={1}>{txDisplayTitle(item, credit, t)}</Text>
+                    <Text style={styles.rowSubtitle}>{txMethodLabel(item.méthode, t)}</Text>
+                    <Text style={styles.rowDate}>{formatDate(item.date_heure)}</Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Text style={[styles.rowAmount, { color: credit ? colors.green : colors.white }]}>
+                      {credit ? '+' : '-'}
+                      {formatFcfa(item.montant)}
+                    </Text>
+                    <Text style={[styles.rowStatus, { color: statutColor(item.statut) }]}>{statutLabel(item.statut, t)}</Text>
+                  </View>
+                </Card>
+              </Pressable>
+            );
+          }}
         />
       )}
     </SafeAreaView>

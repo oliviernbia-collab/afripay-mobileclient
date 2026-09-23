@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../components/ScreenContainer';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
@@ -11,6 +12,7 @@ import { colors } from '../theme/colors';
 import { formatDate } from '../utils/format';
 
 export default function AppareilsConnectesScreen() {
+  const { t } = useTranslation();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -23,9 +25,9 @@ export default function AppareilsConnectesScreen() {
       const data = await getMySessions();
       setSessions(data);
     } catch (e) {
-      setError(e.message || 'Impossible de charger les appareils connectés.');
+      setError(e.message || t('appareils.loadError'));
     }
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -36,12 +38,12 @@ export default function AppareilsConnectesScreen() {
 
   const onRevoke = (session) => {
     Alert.alert(
-      'Déconnecter cet appareil',
-      `Voulez-vous déconnecter "${session.appareil || 'Appareil inconnu'}" ? Il devra se reconnecter pour accéder à votre compte.`,
+      t('appareils.revokeConfirmTitle'),
+      t('appareils.revokeConfirmText', { device: session.appareil || t('appareils.unknownDevice') }),
       [
-        { text: 'Annuler', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Déconnecter',
+          text: t('appareils.revoke'),
           style: 'destructive',
           onPress: async () => {
             setRevokingId(session.id);
@@ -49,7 +51,7 @@ export default function AppareilsConnectesScreen() {
               await revokeSession(session.id);
               setSessions((prev) => prev.filter((s) => s.id !== session.id));
             } catch (e) {
-              setError(e.message || 'Impossible de déconnecter cet appareil.');
+              setError(e.message || t('appareils.revokeError'));
             } finally {
               setRevokingId(null);
             }
@@ -61,11 +63,8 @@ export default function AppareilsConnectesScreen() {
 
   return (
     <ScreenContainer scroll>
-      <Text style={styles.title}>Appareils connectés</Text>
-      <Text style={styles.subtitle}>
-        Liste des appareils actuellement connectés à votre compte AfriPay. Déconnectez tout appareil que vous ne
-        reconnaissez pas.
-      </Text>
+      <Text style={styles.title}>{t('appareils.title')}</Text>
+      <Text style={styles.subtitle}>{t('appareils.subtitle')}</Text>
 
       <ErrorBanner message={error} />
 
@@ -73,7 +72,7 @@ export default function AppareilsConnectesScreen() {
         <ActivityIndicator color={colors.white} style={{ marginTop: 30 }} />
       ) : sessions.length === 0 ? (
         <Card>
-          <Text style={styles.emptyText}>Aucun appareil actif trouvé.</Text>
+          <Text style={styles.emptyText}>{t('appareils.empty')}</Text>
         </Card>
       ) : (
         sessions.map((s) => {
@@ -85,11 +84,11 @@ export default function AppareilsConnectesScreen() {
               </View>
               <View style={{ flex: 1 }}>
                 <View style={styles.rowTitleLine}>
-                  <Text style={styles.rowTitle}>{s.appareil || 'Appareil inconnu'}</Text>
-                  {isCurrent ? <Text style={styles.currentBadge}>Cet appareil</Text> : null}
+                  <Text style={styles.rowTitle}>{s.appareil || t('appareils.unknownDevice')}</Text>
+                  {isCurrent ? <Text style={styles.currentBadge}>{t('appareils.thisDevice')}</Text> : null}
                 </View>
                 <Text style={styles.rowSubtitle}>{s.os}</Text>
-                <Text style={styles.rowDate}>Dernière activité : {formatDate(s.date_connexion)}</Text>
+                <Text style={styles.rowDate}>{t('appareils.lastActivity', { date: formatDate(s.date_connexion) })}</Text>
               </View>
               <Pressable onPress={() => onRevoke(s)} disabled={revokingId === s.id} style={styles.revokeBtn}>
                 {revokingId === s.id ? (

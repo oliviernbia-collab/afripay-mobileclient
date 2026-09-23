@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../api/notifications';
@@ -15,6 +16,7 @@ const TYPE_ICONS = {
 };
 
 export default function NotificationsScreen() {
+  const { t } = useTranslation();
   const [items, setItems] = useState([]);
   const [tab, setTab] = useState('toutes');
   const [loading, setLoading] = useState(true);
@@ -27,9 +29,9 @@ export default function NotificationsScreen() {
       const data = await getNotifications();
       setItems(data);
     } catch (e) {
-      setError(e.message || 'Impossible de charger les notifications.');
+      setError(e.message || t('notifications.loadError'));
     }
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -67,19 +69,23 @@ export default function NotificationsScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.title}>Notifications</Text>
+        <Text style={styles.title}>{t('notifications.title')}</Text>
         <Pressable onPress={onMarkAll}>
-          <Text style={styles.markAll}>Tout marquer lu</Text>
+          <Text style={styles.markAll}>{t('notifications.markAllRead')}</Text>
         </Pressable>
       </View>
 
       <View style={styles.tabsRow}>
         {[
-          { key: 'toutes', label: 'Toutes' },
-          { key: 'non_lues', label: 'Non lues' },
-        ].map((t) => (
-          <Pressable key={t.key} onPress={() => setTab(t.key)} style={[styles.tab, tab === t.key && styles.tabActive]}>
-            <Text style={[styles.tabText, tab === t.key && styles.tabTextActive]}>{t.label}</Text>
+          { key: 'toutes', labelKey: 'notifications.tabAll' },
+          { key: 'non_lues', labelKey: 'notifications.tabUnread' },
+        ].map((tabItem) => (
+          <Pressable
+            key={tabItem.key}
+            onPress={() => setTab(tabItem.key)}
+            style={[styles.tab, tab === tabItem.key && styles.tabActive]}
+          >
+            <Text style={[styles.tabText, tab === tabItem.key && styles.tabTextActive]}>{t(tabItem.labelKey)}</Text>
           </Pressable>
         ))}
       </View>
@@ -96,7 +102,7 @@ export default function NotificationsScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
           ListEmptyComponent={
             <Text style={styles.emptyText}>
-              {tab === 'non_lues' ? 'Aucune notification non lue.' : 'Aucune notification.'}
+              {tab === 'non_lues' ? t('notifications.emptyUnread') : t('notifications.emptyAll')}
             </Text>
           }
           renderItem={({ item }) => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
@@ -7,13 +8,14 @@ import ErrorBanner from '../../components/ErrorBanner';
 import { colors, radius } from '../../theme/colors';
 
 export default function OtpScreen({ route, navigation }) {
+  const { t } = useTranslation();
   const { telephone, devCode } = route.params;
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
 
   const onSubmit = () => {
     if (!otp.trim()) {
-      setError('Veuillez saisir le code reçu par SMS.');
+      setError(t('auth.otp.missingCode'));
       return;
     }
     navigation.navigate('RegisterDetails', { telephone, otp: otp.trim() });
@@ -21,28 +23,27 @@ export default function OtpScreen({ route, navigation }) {
 
   return (
     <ScreenContainer>
-      <Text style={styles.title}>Vérification</Text>
-      <Text style={styles.subtitle}>Un code a été envoyé au {telephone}.</Text>
+      <Text style={styles.title}>{t('auth.otp.title')}</Text>
+      <Text style={styles.subtitle}>{t('auth.otp.subtitle', { phone: telephone })}</Text>
 
       {devCode ? (
         <View style={styles.devHint}>
-          <Text style={styles.devHintTitle}>Mode développement</Text>
+          <Text style={styles.devHintTitle}>{t('auth.otp.devModeTitle')}</Text>
           <Text style={styles.devHintText}>
-            Aucun SMS réel n’est envoyé hors production. Code de test : {' '}
-            <Text style={{ fontWeight: '800', color: colors.gold }}>{devCode}</Text>
+            {t('auth.otp.devModeText')} <Text style={{ fontWeight: '800', color: colors.gold }}>{devCode}</Text>
           </Text>
         </View>
       ) : null}
 
       <ErrorBanner message={error} />
       <Input
-        label="Code de vérification"
+        label={t('auth.otp.codeLabel')}
         placeholder="123456"
         keyboardType="number-pad"
         value={otp}
         onChangeText={setOtp}
       />
-      <GradientButton title="Continuer" onPress={onSubmit} style={{ marginTop: 8 }} />
+      <GradientButton title={t('auth.otp.continue')} onPress={onSubmit} style={{ marginTop: 8 }} />
     </ScreenContainer>
   );
 }

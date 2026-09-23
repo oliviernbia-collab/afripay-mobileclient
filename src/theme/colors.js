@@ -42,55 +42,38 @@ export const kycStatusColor = (statut) => {
   }
 };
 
-export const kycStatusLabel = (statut) => {
-  switch (statut) {
-    case 'validé':
-      return 'Validé';
-    case 'rejeté':
-      return 'Rejeté';
-    case 'suspendu':
-      return 'Suspendu';
-    case 'en_attente':
-    default:
-      return 'En attente';
-  }
-};
+// Label helpers take the i18next `t` function so every backend enum value renders in the
+// app's current language (see src/i18n) — callers get `t` from `useTranslation()`.
+export const kycStatusLabel = (statut, t) => t(`status.kyc.${statut}`, { defaultValue: t('status.kyc.en_attente') });
+
+export const statutLabel = (statut, t) => t(`status.tx.${statut}`, { defaultValue: statut || '—' });
 
 export const providerBrand = {
-  wave: { label: 'Wave', color: '#1DC8E3', icon: 'droplet' },
-  orange_money: { label: 'Orange Money', color: '#F7941D', icon: 'mobile-screen' },
-  moov_money: { label: 'Moov Money', color: '#27AAE1', icon: 'tower-cell' },
-  mtn_money: { label: 'MTN MoMo', color: '#FFC20E', icon: 'sim-card' },
-  djamo: { label: 'Djamo', color: '#7C3AED', icon: 'wallet' },
-  visa: { label: 'Carte Visa', color: '#1A1F71', icon: 'credit-card' },
+  wave: { color: '#1DC8E3', icon: 'droplet' },
+  orange_money: { color: '#F7941D', icon: 'mobile-screen' },
+  moov_money: { color: '#27AAE1', icon: 'tower-cell' },
+  mtn_money: { color: '#FFC20E', icon: 'sim-card' },
+  djamo: { color: '#7C3AED', icon: 'wallet' },
+  visa: { color: '#1A1F71', icon: 'credit-card' },
 };
 
-export const txMethodLabel = (m) => {
-  switch (m) {
-    case 'paume_de_main':
-      return 'Paiement AfriPay (paume)';
-    case 'mobile_money':
-      return 'Mobile Money';
-    case 'carte_visa':
-      return 'Carte Visa';
-    case 'interne':
-      return 'Transfert AfriPay';
-    default:
-      return m || '—';
-  }
-};
+export const providerLabel = (key, t) => t(`providers.${key}`, { defaultValue: key });
 
-export const txTypeLabel = (t) => {
-  switch (t) {
-    case 'achat':
-      return 'Achat';
-    case 'recharge':
-      return 'Recharge';
-    case 'transfert':
-      return 'Transfert';
-    default:
-      return t || '—';
+export const txMethodLabel = (m, t) => t(`txMethod.${m}`, { defaultValue: m || '—' });
+
+export const txTypeLabel = (type, t) => t(`txType.${type}`, { defaultValue: type || '—' });
+
+// A transfert's own libelle (if any) always wins. Otherwise, since "Transfert" alone doesn't say
+// whether money came in or went out, fall back to a direction-aware label using the counterparty's
+// name/phone (attached server-side as `contrepartie`) when available.
+export const txDisplayTitle = (tx, credit, t) => {
+  if (tx.libelle) return tx.libelle;
+  if (tx.type === 'transfert') {
+    const name = tx.contrepartie?.nom || tx.contrepartie?.telephone;
+    if (name) return t(credit ? 'historique.receivedFrom' : 'historique.sentTo', { name });
+    return t(credit ? 'historique.transferReceived' : 'historique.transferSent');
   }
+  return txTypeLabel(tx.type, t);
 };
 
 export const statutColor = (statut) => {

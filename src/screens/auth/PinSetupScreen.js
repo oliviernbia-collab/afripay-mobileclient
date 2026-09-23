@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import ErrorBanner from '../../components/ErrorBanner';
 import PinDots from '../../components/PinDots';
@@ -14,6 +15,7 @@ const PIN_LENGTH = 4;
 // instead of resetting into MainTabs — kept serializable (no function
 // params) so React Navigation can persist/restore state without warning.
 export default function PinSetupScreen({ navigation, route }) {
+  const { t } = useTranslation();
   const isChange = route?.params?.mode === 'change';
   const [stage, setStage] = useState('enter'); // 'enter' | 'confirm'
   const [firstPin, setFirstPin] = useState('');
@@ -31,7 +33,7 @@ export default function PinSetupScreen({ navigation, route }) {
         navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
       }
     } catch (e) {
-      setError(e.message || 'Impossible d’enregistrer le PIN.');
+      setError(e.message || t('auth.pinSetup.saveError'));
       setStage('enter');
       setFirstPin('');
       setPin('');
@@ -57,7 +59,7 @@ export default function PinSetupScreen({ navigation, route }) {
           submit(next);
         } else {
           setTimeout(() => {
-            setError('Les codes PIN ne correspondent pas. Recommencez.');
+            setError(t('auth.pinSetup.mismatchError'));
             setStage('enter');
             setFirstPin('');
             setPin('');
@@ -76,15 +78,13 @@ export default function PinSetupScreen({ navigation, route }) {
     <ScreenContainer>
       <Text style={styles.title}>
         {isChange
-          ? 'Modifier votre PIN'
+          ? t('auth.pinSetup.titleChange')
           : stage === 'enter'
-          ? 'Créez votre code PIN'
-          : 'Confirmez votre code PIN'}
+          ? t('auth.pinSetup.titleCreate')
+          : t('auth.pinSetup.titleConfirm')}
       </Text>
       <Text style={styles.subtitle}>
-        {stage === 'enter'
-          ? 'Ce code à 4 chiffres vous sera demandé pour confirmer les transferts de 50 000 FCFA ou plus.'
-          : 'Saisissez à nouveau le même code pour le confirmer.'}
+        {stage === 'enter' ? t('auth.pinSetup.subtitleCreate') : t('auth.pinSetup.subtitleConfirm')}
       </Text>
       <ErrorBanner message={error} />
 

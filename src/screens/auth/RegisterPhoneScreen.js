@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
@@ -8,18 +9,19 @@ import Icon from '../../components/Icon';
 import { requestClientOtp } from '../../api/auth';
 import { colors } from '../../theme/colors';
 
-const comingSoon = (provider) =>
-  Alert.alert('Bientôt disponible', `L'inscription via ${provider} arrive dans une prochaine version.`);
-
 export default function RegisterPhoneScreen({ navigation }) {
+  const { t } = useTranslation();
   const [telephone, setTelephone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const comingSoon = (provider) =>
+    Alert.alert(t('auth.registerPhone.comingSoonTitle'), t('auth.registerPhone.comingSoonText', { provider }));
+
   const onSubmit = async () => {
     setError('');
     if (!telephone.trim()) {
-      setError('Veuillez saisir votre numéro de téléphone.');
+      setError(t('auth.registerPhone.missingPhone'));
       return;
     }
     setLoading(true);
@@ -27,7 +29,7 @@ export default function RegisterPhoneScreen({ navigation }) {
       const result = await requestClientOtp(telephone.trim());
       navigation.navigate('Otp', { telephone: telephone.trim(), devCode: result.devCode });
     } catch (e) {
-      setError(e.message || 'Impossible d’envoyer le code.');
+      setError(e.message || t('auth.registerPhone.error'));
     } finally {
       setLoading(false);
     }
@@ -35,35 +37,33 @@ export default function RegisterPhoneScreen({ navigation }) {
 
   return (
     <ScreenContainer>
-      <Text style={styles.title}>Créer un compte</Text>
-      <Text style={styles.subtitle}>
-        Saisissez votre numéro de téléphone. Nous vous enverrons un code de vérification.
-      </Text>
+      <Text style={styles.title}>{t('auth.registerPhone.title')}</Text>
+      <Text style={styles.subtitle}>{t('auth.registerPhone.subtitle')}</Text>
       <ErrorBanner message={error} />
       <Input
-        label="Numéro de téléphone"
-        placeholder="Ex: 0102030405"
+        label={t('auth.registerPhone.phoneLabel')}
+        placeholder={t('auth.registerPhone.phonePlaceholder')}
         keyboardType="phone-pad"
         value={telephone}
         onChangeText={setTelephone}
         autoCapitalize="none"
       />
-      <GradientButton title="Recevoir le code" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <GradientButton title={t('auth.registerPhone.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
 
       <View style={styles.dividerRow}>
         <View style={styles.dividerLine} />
-        <Text style={styles.dividerText}>Ou s&apos;inscrire avec</Text>
+        <Text style={styles.dividerText}>{t('auth.registerPhone.orRegisterWith')}</Text>
         <View style={styles.dividerLine} />
       </View>
 
       <View style={styles.socialRow}>
-        <Pressable style={styles.socialBtn} onPress={() => comingSoon('Google')}>
+        <Pressable style={styles.socialBtn} onPress={() => comingSoon(t('auth.registerPhone.google'))}>
           <Icon name="google" brand size={18} color={colors.white} />
-          <Text style={styles.socialText}>Google</Text>
+          <Text style={styles.socialText}>{t('auth.registerPhone.google')}</Text>
         </Pressable>
-        <Pressable style={styles.socialBtn} onPress={() => comingSoon('Apple')}>
+        <Pressable style={styles.socialBtn} onPress={() => comingSoon(t('auth.registerPhone.apple'))}>
           <Icon name="apple" brand size={18} color={colors.white} />
-          <Text style={styles.socialText}>Apple</Text>
+          <Text style={styles.socialText}>{t('auth.registerPhone.apple')}</Text>
         </Pressable>
       </View>
     </ScreenContainer>

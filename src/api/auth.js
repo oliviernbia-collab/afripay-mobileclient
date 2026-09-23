@@ -1,4 +1,4 @@
-import { get, post } from './client';
+import { get, post, patch } from './client';
 import { getDeviceInfo } from '../utils/deviceInfo';
 
 export const requestClientOtp = (telephone) =>
@@ -13,3 +13,8 @@ export const loginClient = (telephone, motDePasse) =>
 export const setClientPin = (pin) => post('/auth/client/pin', { pin });
 
 export const getMe = () => get('/auth/me');
+
+// Persists the app's language choice server-side (users.langue) so notifications generated
+// later (transfert reçu, décision KYC, etc.) render in the language last picked, even from
+// another device.
+export const updateClientLanguage = (langue) => patch('/auth/client/langue', { langue });

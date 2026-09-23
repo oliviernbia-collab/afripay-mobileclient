@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, AppState } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import BrandHeader from './BrandHeader';
 import GradientButton from './GradientButton';
 import Icon from './Icon';
@@ -11,6 +12,7 @@ import { isBiometricLockEnabled, promptBiometricUnlock } from '../utils/biometri
 // cahier des charges 5.6). N'affecte jamais l'écran de connexion (AuthStack) : ce gate ne
 // s'enroule qu'autour de la partie authentifiée de l'app (voir RootNavigator).
 export default function AppLockGate({ children }) {
+  const { t } = useTranslation();
   const [lockEnabled, setLockEnabled] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -29,11 +31,11 @@ export default function AppLockGate({ children }) {
     try {
       const ok = await promptBiometricUnlock();
       if (ok) setUnlocked(true);
-      else setError('Authentification annulée ou échouée.');
+      else setError(t('appLockGate.authCancelled'));
     } catch {
-      setError("Impossible de vérifier votre identité sur cet appareil.");
+      setError(t('appLockGate.authUnavailable'));
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     (async () => {
@@ -62,10 +64,10 @@ export default function AppLockGate({ children }) {
     <View style={styles.container}>
       <BrandHeader size="large" />
       <Icon name="lock" size={28} color={colors.textSecondary} style={{ marginTop: 30, marginBottom: 12 }} />
-      <Text style={styles.title}>AfriPay verrouillé</Text>
-      <Text style={styles.subtitle}>Authentifiez-vous pour accéder à votre compte.</Text>
+      <Text style={styles.title}>{t('appLockGate.title')}</Text>
+      <Text style={styles.subtitle}>{t('appLockGate.subtitle')}</Text>
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <GradientButton title="Déverrouiller" onPress={attemptUnlock} style={{ marginTop: 20, width: '100%' }} />
+      <GradientButton title={t('appLockGate.unlock')} onPress={attemptUnlock} style={{ marginTop: 20, width: '100%' }} />
     </View>
   );
 }

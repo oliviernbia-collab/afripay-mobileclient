@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Card from '../../components/Card';
 import Icon from '../../components/Icon';
@@ -28,6 +29,7 @@ function StepRow({ done, title, subtitle, onPress }) {
 }
 
 export default function KycHomeScreen({ navigation }) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState(null);
   const [docs, setDocs] = useState([]);
   const [enrolled, setEnrolled] = useState(false);
@@ -42,9 +44,9 @@ export default function KycHomeScreen({ navigation }) {
       setDocs(d);
       setEnrolled(b.enrolled);
     } catch (e) {
-      setError(e.message || 'Impossible de charger votre statut KYC.');
+      setError(e.message || t('kyc.home.loadError'));
     }
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -68,10 +70,12 @@ export default function KycHomeScreen({ navigation }) {
 
   return (
     <ScreenContainer scroll>
-      <Text style={styles.title}>Vérification d&apos;identité (KYC)</Text>
+      <Text style={styles.title}>{t('kyc.home.title')}</Text>
 
       <View style={styles.progressRow}>
-        <Text style={styles.progressLabel}>Étape {Math.min(stepsDone + 1, 4)} sur 4</Text>
+        <Text style={styles.progressLabel}>
+          {t('kyc.home.stepLabel', { current: Math.min(stepsDone + 1, 4), total: 4 })}
+        </Text>
       </View>
       <View style={styles.progressTrack}>
         <View style={[styles.progressFill, { width: `${(stepsDone / 4) * 100}%` }]} />
@@ -81,48 +85,47 @@ export default function KycHomeScreen({ navigation }) {
 
       {status ? (
         <Card style={styles.statusCard}>
-          <StatusBadge label={kycStatusLabel(status.statutKyc)} color={kycStatusColor(status.statutKyc)} />
+          <StatusBadge label={kycStatusLabel(status.statutKyc, t)} color={kycStatusColor(status.statutKyc)} />
           <Text style={styles.statusText}>
-            Recharges cumulées (hors KYC validé) : {formatFcfa(status.rechargeCumulee)} / {formatFcfa(10000)}
+            {t('kyc.home.cumulativeRecharge', {
+              amount: formatFcfa(status.rechargeCumulee),
+              cap: formatFcfa(10000),
+            })}
           </Text>
           {status.statutKyc === 'rejeté' ? (
-            <Text style={styles.statusHint}>
-              Votre dossier a été rejeté. Vous pouvez soumettre de nouveaux documents ci-dessous.
-            </Text>
+            <Text style={styles.statusHint}>{t('kyc.home.statusRejected')}</Text>
           ) : status.statutKyc === 'validé' ? (
-            <Text style={styles.statusHintOk}>Votre identité est vérifiée. Plafond de recharge levé.</Text>
+            <Text style={styles.statusHintOk}>{t('kyc.home.statusValidated')}</Text>
           ) : (
-            <Text style={styles.statusHint}>
-              Votre dossier est en cours d&apos;examen par notre équipe back-office.
-            </Text>
+            <Text style={styles.statusHint}>{t('kyc.home.statusPending')}</Text>
           )}
         </Card>
       ) : null}
 
-      <Text style={styles.sectionLabel}>Étapes</Text>
+      <Text style={styles.sectionLabel}>{t('kyc.home.stepsLabel')}</Text>
       <Card style={{ paddingVertical: 4 }}>
         <StepRow
           done={hasPersonalInfo}
-          title="1. Informations personnelles"
-          subtitle="Nom, date de naissance, adresse"
+          title={t('kyc.home.step1Title')}
+          subtitle={t('kyc.home.step1Subtitle')}
           onPress={() => navigation.navigate('KycInfo')}
         />
         <StepRow
           done={hasIdDoc}
-          title="2. Pièce d'identité"
-          subtitle="CNI, passeport ou carte de séjour"
-          onPress={() => navigation.navigate('KycDocument', { typeDocument: 'cni', title: "Pièce d'identité" })}
+          title={t('kyc.home.step2Title')}
+          subtitle={t('kyc.home.step2Subtitle')}
+          onPress={() => navigation.navigate('KycDocument', { typeDocument: 'cni', title: t('kyc.home.step2NavTitle') })}
         />
         <StepRow
           done={hasSelfie}
-          title="3. Selfie"
-          subtitle="Photo de votre visage"
-          onPress={() => navigation.navigate('KycDocument', { typeDocument: 'selfie', title: 'Selfie' })}
+          title={t('kyc.home.step3Title')}
+          subtitle={t('kyc.home.step3Subtitle')}
+          onPress={() => navigation.navigate('KycDocument', { typeDocument: 'selfie', title: t('kyc.home.step3NavTitle') })}
         />
         <StepRow
           done={enrolled}
-          title="4. Enrôlement du paiement"
-          subtitle="Génère votre code de paiement AfriPay"
+          title={t('kyc.home.step4Title')}
+          subtitle={t('kyc.home.step4Subtitle')}
           onPress={() => navigation.navigate('KycEnroll')}
         />
       </Card>

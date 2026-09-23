@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
@@ -9,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { colors } from '../../theme/colors';
 
 export default function KycInfoScreen({ navigation }) {
+  const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
   const [nom, setNom] = useState(user?.nom || '');
   const [prenom, setPrenom] = useState(user?.prenom || '');
@@ -25,7 +27,7 @@ export default function KycInfoScreen({ navigation }) {
       await refreshUser();
       navigation.goBack();
     } catch (e) {
-      setError(e.message || 'Impossible d’enregistrer vos informations.');
+      setError(e.message || t('kyc.info.saveError'));
     } finally {
       setLoading(false);
     }
@@ -33,18 +35,23 @@ export default function KycInfoScreen({ navigation }) {
 
   return (
     <ScreenContainer scroll>
-      <Text style={styles.title}>Informations personnelles</Text>
+      <Text style={styles.title}>{t('kyc.info.title')}</Text>
       <ErrorBanner message={error} />
-      <Input label="Nom" value={nom} onChangeText={setNom} />
-      <Input label="Prénom" value={prenom} onChangeText={setPrenom} />
+      <Input label={t('kyc.info.nameLabel')} value={nom} onChangeText={setNom} />
+      <Input label={t('kyc.info.firstNameLabel')} value={prenom} onChangeText={setPrenom} />
       <Input
-        label="Date de naissance"
-        placeholder="AAAA-MM-JJ"
+        label={t('kyc.info.birthDateLabel')}
+        placeholder={t('kyc.info.birthDatePlaceholder')}
         value={dateNaissance}
         onChangeText={setDateNaissance}
       />
-      <Input label="Adresse" placeholder="Ville, quartier..." value={adresse} onChangeText={setAdresse} />
-      <GradientButton title="Enregistrer" onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <Input
+        label={t('kyc.info.addressLabel')}
+        placeholder={t('kyc.info.addressPlaceholder')}
+        value={adresse}
+        onChangeText={setAdresse}
+      />
+      <GradientButton title={t('kyc.info.save')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
     </ScreenContainer>
   );
 }
