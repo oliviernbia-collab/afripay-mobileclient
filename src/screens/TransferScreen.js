@@ -7,7 +7,7 @@ import GradientButton from '../components/GradientButton';
 import ErrorBanner from '../components/ErrorBanner';
 import Card from '../components/Card';
 import { transferInterne } from '../api/transferts';
-import { colors } from '../theme/colors';
+import { colors, radius } from '../theme/colors';
 import { formatFcfa } from '../utils/format';
 
 export default function TransferScreen({ navigation }) {
@@ -72,45 +72,48 @@ export default function TransferScreen({ navigation }) {
         </Card>
       ) : null}
 
-      <Input
-        label={t('transfer.recipientLabel')}
-        placeholder={t('transfer.recipientPlaceholder')}
-        keyboardType="phone-pad"
-        value={telephoneDestinataire}
-        onChangeText={setTelephoneDestinataire}
-      />
-      <Input
-        label={t('transfer.amountLabel')}
-        placeholder={t('transfer.amountPlaceholder')}
-        keyboardType="number-pad"
-        value={montant}
-        onChangeText={setMontant}
-      />
-      <Input
-        label={t('transfer.noteLabel')}
-        placeholder={t('transfer.notePlaceholder')}
-        value={libelle}
-        onChangeText={setLibelle}
-      />
+      <Card style={styles.formCard}>
+        <Input
+          label={t('transfer.recipientLabel')}
+          placeholder={t('transfer.recipientPlaceholder')}
+          keyboardType="phone-pad"
+          value={telephoneDestinataire}
+          onChangeText={setTelephoneDestinataire}
+        />
+        <Input
+          label={t('transfer.amountLabel')}
+          placeholder={t('transfer.amountPlaceholder')}
+          keyboardType="number-pad"
+          value={montant}
+          onChangeText={setMontant}
+        />
+        <Input
+          label={t('transfer.noteLabel')}
+          placeholder={t('transfer.notePlaceholder')}
+          value={libelle}
+          onChangeText={setLibelle}
+        />
 
-      <Text style={styles.pinNote}>{t('transfer.pinNote')}</Text>
-      <Input
-        label={t('transfer.pinLabel')}
-        placeholder="••••"
-        keyboardType="number-pad"
-        secureTextEntry
-        maxLength={6}
-        value={pin}
-        onChangeText={setPin}
-      />
+        <Text style={styles.pinNote}>{t('transfer.pinNote')}</Text>
+        <Input
+          label={t('transfer.pinLabel')}
+          placeholder="••••"
+          keyboardType="number-pad"
+          secureTextEntry
+          maxLength={6}
+          value={pin}
+          onChangeText={setPin}
+        />
 
-      <GradientButton title={t('transfer.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+        <GradientButton title={t('transfer.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      </Card>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   title: { color: colors.white, fontSize: 22, fontWeight: '700', marginBottom: 18 },
+  formCard: { borderRadius: radius.xl },
   pinNote: { color: colors.gold, fontSize: 12, marginBottom: 10, lineHeight: 17 },
   successCard: { borderColor: colors.success, marginBottom: 16 },
   successTitle: { color: colors.success, fontWeight: '700', marginBottom: 6 },

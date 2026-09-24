@@ -1,5 +1,6 @@
 {
   "common": {
+    "ok": "OK",
     "cancel": "Cancelar",
     "save": "Guardar",
     "send": "Enviar",
@@ -272,7 +273,8 @@
       "addressLabel": "Dirección",
       "addressPlaceholder": "Ciudad, barrio...",
       "save": "Guardar",
-      "saveError": "No se pudo guardar su información."
+      "saveError": "No se pudo guardar su información.",
+      "changePassword": "Cambiar contraseña"
     },
     "document": {
       "defaultTitle": "Documento de identidad",
@@ -421,7 +423,8 @@
       "noAccount": "¿Aún no tiene una cuenta?",
       "createAccount": "Crear una cuenta",
       "missingFields": "Ingrese su número de teléfono y contraseña.",
-      "error": "No se pudo iniciar sesión."
+      "error": "No se pudo iniciar sesión.",
+      "forgotPassword": "¿Olvidó su contraseña?"
     },
     "otp": {
       "title": "Verificación",
@@ -441,7 +444,8 @@
       "subtitleCreate": "Este código de 4 dígitos se le solicitará para confirmar cada transferencia.",
       "subtitleConfirm": "Ingrese nuevamente el mismo código para confirmarlo.",
       "mismatchError": "Los códigos PIN no coinciden. Vuelva a intentarlo.",
-      "saveError": "No se pudo guardar el PIN."
+      "saveError": "No se pudo guardar el PIN.",
+      "forgotPin": "¿Olvidó su código PIN?"
     },
     "registerDetails": {
       "title": "Sus datos",
@@ -473,6 +477,48 @@
       "missingPhone": "Ingrese su número de teléfono.",
       "error": "No se pudo enviar el código."
     }
+  },
+  "changePassword": {
+    "title": "Cambiar contraseña",
+    "currentLabel": "Contraseña actual",
+    "newLabel": "Nueva contraseña",
+    "newPlaceholder": "Al menos 6 caracteres",
+    "confirmLabel": "Confirmar nueva contraseña",
+    "submit": "Guardar",
+    "missingFields": "La contraseña actual y la nueva contraseña son obligatorias.",
+    "passwordTooShort": "La nueva contraseña debe tener al menos 6 caracteres.",
+    "passwordMismatch": "Las nuevas contraseñas no coinciden.",
+    "successTitle": "Contraseña actualizada",
+    "successText": "Su contraseña ha sido actualizada.",
+    "error": "No se pudo cambiar la contraseña."
+  },
+  "forgotAccess": {
+    "titlePin": "Código PIN olvidado",
+    "titlePassword": "Contraseña olvidada",
+    "subtitlePin": "Se enviará un código de verificación al número de su cuenta.",
+    "subtitlePassword": "Ingrese su número de teléfono para recibir un código de verificación.",
+    "phoneLabel": "Número de teléfono",
+    "phonePlaceholder": "Ej: 0102030405",
+    "sendCode": "Enviar código",
+    "missingPhone": "Ingrese su número de teléfono.",
+    "otpError": "No se pudo enviar el código.",
+    "resetTitlePin": "Nuevo código PIN",
+    "resetTitlePassword": "Nueva contraseña",
+    "resetSubtitle": "Se envió un código al {{phone}}.",
+    "codeLabel": "Código de verificación",
+    "newPinLabel": "Nuevo código PIN",
+    "newPasswordLabel": "Nueva contraseña",
+    "newPasswordPlaceholder": "Al menos 6 caracteres",
+    "confirmLabel": "Confirmar",
+    "submit": "Restablecer",
+    "missingCode": "Ingrese el código recibido por SMS.",
+    "pinInvalid": "El código PIN debe tener entre 4 y 6 dígitos.",
+    "passwordTooShort": "La contraseña debe tener al menos 6 caracteres.",
+    "mismatch": "Las dos entradas no coinciden.",
+    "successTitle": "Restablecimiento exitoso",
+    "successTextPin": "Su código PIN ha sido actualizado.",
+    "successTextPassword": "Su contraseña ha sido actualizada. Vuelva a iniciar sesión con su nueva contraseña.",
+    "error": "No se pudo restablecer. Verifique el código recibido por SMS."
   },
   "status": {
     "kyc": {

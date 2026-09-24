@@ -6,6 +6,8 @@ import RegisterPhoneScreen from '../screens/auth/RegisterPhoneScreen';
 import OtpScreen from '../screens/auth/OtpScreen';
 import RegisterDetailsScreen from '../screens/auth/RegisterDetailsScreen';
 import PinSetupScreen from '../screens/auth/PinSetupScreen';
+import ForgotAccessPhoneScreen from '../screens/auth/ForgotAccessPhoneScreen';
+import ForgotAccessResetScreen from '../screens/auth/ForgotAccessResetScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +27,8 @@ export default function AuthStack() {
       <Stack.Screen name="Otp" component={OtpScreen} options={{ title: '' }} />
       <Stack.Screen name="RegisterDetails" component={RegisterDetailsScreen} options={{ title: '' }} />
       <Stack.Screen name="PinSetup" component={PinSetupScreen} options={{ title: '', headerBackVisible: false }} />
+      <Stack.Screen name="ForgotAccessPhone" component={ForgotAccessPhoneScreen} options={{ title: '' }} />
+      <Stack.Screen name="ForgotAccessReset" component={ForgotAccessResetScreen} options={{ title: '' }} />
     </Stack.Navigator>
   );
 }

@@ -1,5 +1,6 @@
 {
   "common": {
+    "ok": "OK",
     "cancel": "Cancel",
     "save": "Save",
     "send": "Send",
@@ -272,7 +273,8 @@
       "addressLabel": "Address",
       "addressPlaceholder": "City, neighborhood...",
       "save": "Save",
-      "saveError": "Unable to save your information."
+      "saveError": "Unable to save your information.",
+      "changePassword": "Change password"
     },
     "document": {
       "defaultTitle": "ID document",
@@ -421,7 +423,8 @@
       "noAccount": "Don't have an account yet?",
       "createAccount": "Create an account",
       "missingFields": "Please enter your phone number and password.",
-      "error": "Sign-in failed."
+      "error": "Sign-in failed.",
+      "forgotPassword": "Forgot password?"
     },
     "otp": {
       "title": "Verification",
@@ -441,7 +444,8 @@
       "subtitleCreate": "This 4-digit code will be requested to confirm every transfer.",
       "subtitleConfirm": "Enter the same code again to confirm it.",
       "mismatchError": "The PIN codes don't match. Try again.",
-      "saveError": "Unable to save the PIN."
+      "saveError": "Unable to save the PIN.",
+      "forgotPin": "Forgot PIN code?"
     },
     "registerDetails": {
       "title": "Your information",
@@ -473,6 +477,48 @@
       "missingPhone": "Please enter your phone number.",
       "error": "Unable to send the code."
     }
+  },
+  "changePassword": {
+    "title": "Change password",
+    "currentLabel": "Current password",
+    "newLabel": "New password",
+    "newPlaceholder": "At least 6 characters",
+    "confirmLabel": "Confirm new password",
+    "submit": "Save",
+    "missingFields": "The current password and new password are required.",
+    "passwordTooShort": "The new password must be at least 6 characters long.",
+    "passwordMismatch": "The new passwords do not match.",
+    "successTitle": "Password changed",
+    "successText": "Your password has been updated.",
+    "error": "Unable to change the password."
+  },
+  "forgotAccess": {
+    "titlePin": "Forgot PIN code",
+    "titlePassword": "Forgot password",
+    "subtitlePin": "A verification code will be sent to your account's phone number.",
+    "subtitlePassword": "Enter your phone number to receive a verification code.",
+    "phoneLabel": "Phone number",
+    "phonePlaceholder": "e.g. 0102030405",
+    "sendCode": "Send code",
+    "missingPhone": "Please enter your phone number.",
+    "otpError": "Unable to send the code.",
+    "resetTitlePin": "New PIN code",
+    "resetTitlePassword": "New password",
+    "resetSubtitle": "A code was sent to {{phone}}.",
+    "codeLabel": "Verification code",
+    "newPinLabel": "New PIN code",
+    "newPasswordLabel": "New password",
+    "newPasswordPlaceholder": "At least 6 characters",
+    "confirmLabel": "Confirm",
+    "submit": "Reset",
+    "missingCode": "Please enter the code you received by SMS.",
+    "pinInvalid": "The PIN code must be 4 to 6 digits.",
+    "passwordTooShort": "The password must be at least 6 characters long.",
+    "mismatch": "The two entries don't match.",
+    "successTitle": "Reset successful",
+    "successTextPin": "Your PIN code has been updated.",
+    "successTextPassword": "Your password has been updated. Sign in again with your new password.",
+    "error": "Unable to reset. Check the code you received by SMS."
   },
   "status": {
     "kyc": {

@@ -10,11 +10,14 @@ import AboutScreen from '../screens/AboutScreen';
 import TermsScreen from '../screens/TermsScreen';
 import PrivacyScreen from '../screens/PrivacyScreen';
 import PinSetupScreen from '../screens/auth/PinSetupScreen';
+import ForgotAccessPhoneScreen from '../screens/auth/ForgotAccessPhoneScreen';
+import ForgotAccessResetScreen from '../screens/auth/ForgotAccessResetScreen';
 import KycHomeScreen from '../screens/kyc/KycHomeScreen';
 import KycInfoScreen from '../screens/kyc/KycInfoScreen';
 import KycDocumentScreen from '../screens/kyc/KycDocumentScreen';
 import KycEnrollScreen from '../screens/kyc/KycEnrollScreen';
 import AppareilsConnectesScreen from '../screens/AppareilsConnectesScreen';
+import ChangePasswordScreen from '../screens/ChangePasswordScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,11 +41,14 @@ export default function MainStack() {
       <Stack.Screen name="Terms" component={TermsScreen} options={{ title: '' }} />
       <Stack.Screen name="Privacy" component={PrivacyScreen} options={{ title: '' }} />
       <Stack.Screen name="PinSetup" component={PinSetupScreen} options={{ title: '' }} />
+      <Stack.Screen name="ForgotAccessPhone" component={ForgotAccessPhoneScreen} options={{ title: '' }} />
+      <Stack.Screen name="ForgotAccessReset" component={ForgotAccessResetScreen} options={{ title: '' }} />
       <Stack.Screen name="KycHome" component={KycHomeScreen} options={{ title: '' }} />
       <Stack.Screen name="KycInfo" component={KycInfoScreen} options={{ title: '' }} />
       <Stack.Screen name="KycDocument" component={KycDocumentScreen} options={{ title: '' }} />
       <Stack.Screen name="KycEnroll" component={KycEnrollScreen} options={{ title: '' }} />
       <Stack.Screen name="AppareilsConnectes" component={AppareilsConnectesScreen} options={{ title: '' }} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ title: '' }} />
     </Stack.Navigator>
   );
 }

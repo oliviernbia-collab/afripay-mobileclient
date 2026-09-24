@@ -1,5 +1,6 @@
 {
   "common": {
+    "ok": "OK",
     "cancel": "Annuler",
     "save": "Enregistrer",
     "send": "Envoyer",
@@ -272,7 +273,8 @@
       "addressLabel": "Adresse",
       "addressPlaceholder": "Ville, quartier...",
       "save": "Enregistrer",
-      "saveError": "Impossible d'enregistrer vos informations."
+      "saveError": "Impossible d'enregistrer vos informations.",
+      "changePassword": "Changer le mot de passe"
     },
     "document": {
       "defaultTitle": "Pièce d'identité",
@@ -421,7 +423,8 @@
       "noAccount": "Pas encore de compte ?",
       "createAccount": "Créer un compte",
       "missingFields": "Veuillez renseigner votre numéro et votre mot de passe.",
-      "error": "Connexion impossible."
+      "error": "Connexion impossible.",
+      "forgotPassword": "Mot de passe oublié ?"
     },
     "otp": {
       "title": "Vérification",
@@ -441,7 +444,8 @@
       "subtitleCreate": "Ce code à 4 chiffres vous sera demandé pour confirmer chaque transfert.",
       "subtitleConfirm": "Saisissez à nouveau le même code pour le confirmer.",
       "mismatchError": "Les codes PIN ne correspondent pas. Recommencez.",
-      "saveError": "Impossible d'enregistrer le PIN."
+      "saveError": "Impossible d'enregistrer le PIN.",
+      "forgotPin": "Code PIN oublié ?"
     },
     "registerDetails": {
       "title": "Vos informations",
@@ -473,6 +477,48 @@
       "missingPhone": "Veuillez saisir votre numéro de téléphone.",
       "error": "Impossible d'envoyer le code."
     }
+  },
+  "changePassword": {
+    "title": "Changer le mot de passe",
+    "currentLabel": "Mot de passe actuel",
+    "newLabel": "Nouveau mot de passe",
+    "newPlaceholder": "Au moins 6 caractères",
+    "confirmLabel": "Confirmer le nouveau mot de passe",
+    "submit": "Enregistrer",
+    "missingFields": "Le mot de passe actuel et le nouveau mot de passe sont requis.",
+    "passwordTooShort": "Le nouveau mot de passe doit contenir au moins 6 caractères.",
+    "passwordMismatch": "Les nouveaux mots de passe ne correspondent pas.",
+    "successTitle": "Mot de passe modifié",
+    "successText": "Votre mot de passe a été mis à jour.",
+    "error": "Impossible de modifier le mot de passe."
+  },
+  "forgotAccess": {
+    "titlePin": "Code PIN oublié",
+    "titlePassword": "Mot de passe oublié",
+    "subtitlePin": "Un code de vérification sera envoyé au numéro de votre compte.",
+    "subtitlePassword": "Saisissez votre numéro de téléphone pour recevoir un code de vérification.",
+    "phoneLabel": "Numéro de téléphone",
+    "phonePlaceholder": "Ex: 0102030405",
+    "sendCode": "Envoyer le code",
+    "missingPhone": "Veuillez saisir votre numéro de téléphone.",
+    "otpError": "Impossible d'envoyer le code.",
+    "resetTitlePin": "Nouveau code PIN",
+    "resetTitlePassword": "Nouveau mot de passe",
+    "resetSubtitle": "Un code a été envoyé au {{phone}}.",
+    "codeLabel": "Code de vérification",
+    "newPinLabel": "Nouveau code PIN",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "newPasswordPlaceholder": "Au moins 6 caractères",
+    "confirmLabel": "Confirmer",
+    "submit": "Réinitialiser",
+    "missingCode": "Veuillez saisir le code reçu par SMS.",
+    "pinInvalid": "Le code PIN doit contenir 4 à 6 chiffres.",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+    "mismatch": "Les deux saisies ne correspondent pas.",
+    "successTitle": "Réinitialisation réussie",
+    "successTextPin": "Votre code PIN a été mis à jour.",
+    "successTextPassword": "Votre mot de passe a été mis à jour. Reconnectez-vous avec votre nouveau mot de passe.",
+    "error": "Impossible de réinitialiser. Vérifiez le code reçu par SMS."
   },
   "status": {
     "kyc": {

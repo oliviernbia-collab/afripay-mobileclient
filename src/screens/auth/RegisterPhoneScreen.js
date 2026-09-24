@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
+import Card from '../../components/Card';
 import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
 import ErrorBanner from '../../components/ErrorBanner';
 import Icon from '../../components/Icon';
 import { requestClientOtp } from '../../api/auth';
-import { colors } from '../../theme/colors';
+import { colors, radius } from '../../theme/colors';
 
 export default function RegisterPhoneScreen({ navigation }) {
   const { t } = useTranslation();
@@ -40,15 +41,17 @@ export default function RegisterPhoneScreen({ navigation }) {
       <Text style={styles.title}>{t('auth.registerPhone.title')}</Text>
       <Text style={styles.subtitle}>{t('auth.registerPhone.subtitle')}</Text>
       <ErrorBanner message={error} />
-      <Input
-        label={t('auth.registerPhone.phoneLabel')}
-        placeholder={t('auth.registerPhone.phonePlaceholder')}
-        keyboardType="phone-pad"
-        value={telephone}
-        onChangeText={setTelephone}
-        autoCapitalize="none"
-      />
-      <GradientButton title={t('auth.registerPhone.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <Card style={styles.formCard}>
+        <Input
+          label={t('auth.registerPhone.phoneLabel')}
+          placeholder={t('auth.registerPhone.phonePlaceholder')}
+          keyboardType="phone-pad"
+          value={telephone}
+          onChangeText={setTelephone}
+          autoCapitalize="none"
+        />
+        <GradientButton title={t('auth.registerPhone.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      </Card>
 
       <View style={styles.dividerRow}>
         <View style={styles.dividerLine} />
@@ -73,6 +76,7 @@ export default function RegisterPhoneScreen({ navigation }) {
 const styles = StyleSheet.create({
   title: { color: colors.white, fontSize: 22, fontWeight: '700', marginTop: 30, marginBottom: 10 },
   subtitle: { color: colors.textSecondary, marginBottom: 24, lineHeight: 20 },
+  formCard: { borderRadius: radius.xl },
   dividerRow: { flexDirection: 'row', alignItems: 'center', marginTop: 24, marginBottom: 16 },
   dividerLine: { flex: 1, height: 1, backgroundColor: colors.border },
   dividerText: { color: colors.textSecondary, fontSize: 12, marginHorizontal: 10 },

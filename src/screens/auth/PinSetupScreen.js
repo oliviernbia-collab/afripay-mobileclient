@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import ErrorBanner from '../../components/ErrorBanner';
+import Card from '../../components/Card';
 import PinDots from '../../components/PinDots';
 import PinKeypad from '../../components/PinKeypad';
 import { setClientPin } from '../../api/auth';
-import { colors } from '../../theme/colors';
+import { colors, radius } from '../../theme/colors';
 
 const PIN_LENGTH = 4;
 
@@ -105,11 +106,22 @@ export default function PinSetupScreen({ navigation, route }) {
       </Text>
       <ErrorBanner message={error} />
 
-      <PinDots length={pin.length} minSlots={PIN_LENGTH} />
+      <Card style={styles.pinCard}>
+        <PinDots length={pin.length} minSlots={PIN_LENGTH} />
 
-      <View style={{ marginTop: 20 }}>
-        <PinKeypad onDigit={onDigit} onBackspace={onBackspace} disabled={loading} />
-      </View>
+        <View style={{ marginTop: 20 }}>
+          <PinKeypad onDigit={onDigit} onBackspace={onBackspace} disabled={loading} />
+        </View>
+      </Card>
+
+      {stage === 'current' && (
+        <Pressable
+          onPress={() => navigation.navigate('ForgotAccessPhone', { type: 'pin' })}
+          style={styles.forgotLink}
+        >
+          <Text style={styles.forgotLinkText}>{t('auth.pinSetup.forgotPin')}</Text>
+        </Pressable>
+      )}
     </ScreenContainer>
   );
 }
@@ -117,4 +129,7 @@ export default function PinSetupScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   title: { color: colors.white, fontSize: 22, fontWeight: '700', marginTop: 30, marginBottom: 10, textAlign: 'center' },
   subtitle: { color: colors.textSecondary, marginBottom: 10, lineHeight: 20, textAlign: 'center' },
+  pinCard: { marginTop: 16, borderRadius: radius.xl, paddingVertical: 24 },
+  forgotLink: { alignSelf: 'center', marginTop: 20 },
+  forgotLinkText: { color: colors.textSecondary, fontSize: 13, fontWeight: '600' },
 });

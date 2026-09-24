@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
+import Card from '../../components/Card';
 import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
 import ErrorBanner from '../../components/ErrorBanner';
 import { useAuth } from '../../context/AuthContext';
-import { colors } from '../../theme/colors';
+import { colors, radius } from '../../theme/colors';
 
 export default function RegisterDetailsScreen({ route, navigation }) {
   const { t } = useTranslation();
@@ -56,45 +57,48 @@ export default function RegisterDetailsScreen({ route, navigation }) {
     <ScreenContainer scroll>
       <Text style={styles.title}>{t('auth.registerDetails.title')}</Text>
       <ErrorBanner message={error} />
-      <Input
-        label={t('auth.registerDetails.nameLabel')}
-        placeholder={t('auth.registerDetails.namePlaceholder')}
-        value={nom}
-        onChangeText={setNom}
-      />
-      <Input
-        label={t('auth.registerDetails.firstNameLabel')}
-        placeholder={t('auth.registerDetails.firstNamePlaceholder')}
-        value={prenom}
-        onChangeText={setPrenom}
-      />
-      <Input
-        label={t('auth.registerDetails.emailLabel')}
-        placeholder="awa@email.com"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <Input
-        label={t('auth.registerDetails.passwordLabel')}
-        placeholder={t('auth.registerDetails.passwordPlaceholder')}
-        secureTextEntry
-        value={motDePasse}
-        onChangeText={setMotDePasse}
-      />
-      <Input
-        label={t('auth.registerDetails.confirmLabel')}
-        placeholder="••••••••"
-        secureTextEntry
-        value={confirmation}
-        onChangeText={setConfirmation}
-      />
-      <GradientButton title={t('auth.registerDetails.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      <Card style={styles.formCard}>
+        <Input
+          label={t('auth.registerDetails.nameLabel')}
+          placeholder={t('auth.registerDetails.namePlaceholder')}
+          value={nom}
+          onChangeText={setNom}
+        />
+        <Input
+          label={t('auth.registerDetails.firstNameLabel')}
+          placeholder={t('auth.registerDetails.firstNamePlaceholder')}
+          value={prenom}
+          onChangeText={setPrenom}
+        />
+        <Input
+          label={t('auth.registerDetails.emailLabel')}
+          placeholder="awa@email.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Input
+          label={t('auth.registerDetails.passwordLabel')}
+          placeholder={t('auth.registerDetails.passwordPlaceholder')}
+          secureTextEntry
+          value={motDePasse}
+          onChangeText={setMotDePasse}
+        />
+        <Input
+          label={t('auth.registerDetails.confirmLabel')}
+          placeholder="••••••••"
+          secureTextEntry
+          value={confirmation}
+          onChangeText={setConfirmation}
+        />
+        <GradientButton title={t('auth.registerDetails.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
+      </Card>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   title: { color: colors.white, fontSize: 22, fontWeight: '700', marginTop: 30, marginBottom: 18 },
+  formCard: { borderRadius: radius.xl },
 });
