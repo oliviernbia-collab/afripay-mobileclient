@@ -44,6 +44,11 @@ export default function PayerScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       load();
+      // Le code de présentation expire après ~90s côté serveur (voir biometricService) pour
+      // limiter la fenêtre de rejeu si le QR affiché est capturé — on le régénère régulièrement
+      // tant que cet écran reste ouvert, plutôt qu'une seule fois à l'arrivée sur l'écran.
+      const interval = setInterval(load, 45000);
+      return () => clearInterval(interval);
     }, [load])
   );
 

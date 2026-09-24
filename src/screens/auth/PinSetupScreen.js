@@ -17,7 +17,11 @@ const PIN_LENGTH = 4;
 export default function PinSetupScreen({ navigation, route }) {
   const { t } = useTranslation();
   const isChange = route?.params?.mode === 'change';
-  const [stage, setStage] = useState('enter'); // 'enter' | 'confirm'
+  // Un changement de PIN doit d'abord confirmer l'ancien (le backend l'exige désormais :
+  // POST /auth/client/pin refuse la requête sans `pinActuel` dès qu'un PIN existe déjà) —
+  // sans quoi une session volée suffirait à remplacer le PIN sans le connaître.
+  const [stage, setStage] = useState(isChange ? 'current' : 'enter'); // 'current' | 'enter' | 'confirm'
+  const [currentPin, setCurrentPin] = useState('');
   const [firstPin, setFirstPin] = useState('');
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +30,7 @@ export default function PinSetupScreen({ navigation, route }) {
   const submit = async (confirmedPin) => {
     setLoading(true);
     try {
-      await setClientPin(confirmedPin);
+      await setClientPin(confirmedPin, isChange ? currentPin : undefined);
       if (isChange) {
         navigation.goBack();
       } else {
@@ -34,7 +38,8 @@ export default function PinSetupScreen({ navigation, route }) {
       }
     } catch (e) {
       setError(e.message || t('auth.pinSetup.saveError'));
-      setStage('enter');
+      setStage(isChange ? 'current' : 'enter');
+      setCurrentPin('');
       setFirstPin('');
       setPin('');
     } finally {
@@ -48,7 +53,13 @@ export default function PinSetupScreen({ navigation, route }) {
     const next = pin + d;
     setPin(next);
     if (next.length === PIN_LENGTH) {
-      if (stage === 'enter') {
+      if (stage === 'current') {
+        setTimeout(() => {
+          setCurrentPin(next);
+          setStage('enter');
+          setPin('');
+        }, 150);
+      } else if (stage === 'enter') {
         setTimeout(() => {
           setFirstPin(next);
           setStage('confirm');
@@ -77,14 +88,20 @@ export default function PinSetupScreen({ navigation, route }) {
   return (
     <ScreenContainer>
       <Text style={styles.title}>
-        {isChange
+        {stage === 'current'
+          ? t('auth.pinSetup.titleCurrent')
+          : isChange
           ? t('auth.pinSetup.titleChange')
           : stage === 'enter'
           ? t('auth.pinSetup.titleCreate')
           : t('auth.pinSetup.titleConfirm')}
       </Text>
       <Text style={styles.subtitle}>
-        {stage === 'enter' ? t('auth.pinSetup.subtitleCreate') : t('auth.pinSetup.subtitleConfirm')}
+        {stage === 'current'
+          ? t('auth.pinSetup.subtitleCurrent')
+          : stage === 'enter'
+          ? t('auth.pinSetup.subtitleCreate')
+          : t('auth.pinSetup.subtitleConfirm')}
       </Text>
       <ErrorBanner message={error} />
 

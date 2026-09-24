@@ -31,10 +31,24 @@ const HOSTS = {
   'ios-simulator': 'localhost',
 };
 
-export const API_HOST = HOSTS[MODE] || LAN_IP;
-export const API_BASE_URL = `http://${API_HOST}:${PORT}/api`;
+const DEV_HOST = HOSTS[MODE] || LAN_IP;
+
+// En build de production (__DEV__ === false), l'URL de l'API doit venir de EXPO_PUBLIC_API_URL
+// (définie au build, ex. via eas.json) et être en HTTPS — jamais l'IP locale de développement en
+// clair, qui exposerait PIN, mot de passe et tokens sur le réseau (Wi-Fi public/partagé). Le
+// démarrage échoue volontairement si ce n'est pas configuré, plutôt que de se rabattre
+// silencieusement sur du HTTP.
+const PROD_API_URL = process.env.EXPO_PUBLIC_API_URL;
+if (!__DEV__ && (!PROD_API_URL || !PROD_API_URL.startsWith('https://'))) {
+  throw new Error(
+    'EXPO_PUBLIC_API_URL doit être défini avec une URL https:// pour un build de production (voir src/config/api.js).'
+  );
+}
+
+export const API_HOST = __DEV__ ? DEV_HOST : new URL(PROD_API_URL).host;
+export const API_BASE_URL = __DEV__ ? `http://${DEV_HOST}:${PORT}/api` : `${PROD_API_URL.replace(/\/$/, '')}/api`;
 // Used to build absolute URLs for files served under /uploads/<file>
-export const SERVER_ORIGIN = `http://${API_HOST}:${PORT}`;
+export const SERVER_ORIGIN = __DEV__ ? `http://${DEV_HOST}:${PORT}` : PROD_API_URL.replace(/\/$/, '');
 
 // Photos / documents are now stored on Cloudinary and come back as absolute
 // https:// URLs. Older records may still hold a relative "/uploads/<file>"

@@ -10,8 +10,6 @@ import { transferInterne } from '../api/transferts';
 import { colors } from '../theme/colors';
 import { formatFcfa } from '../utils/format';
 
-const PIN_THRESHOLD = 50000;
-
 export default function TransferScreen({ navigation }) {
   const { t } = useTranslation();
   const [telephoneDestinataire, setTelephoneDestinataire] = useState('');
@@ -23,7 +21,6 @@ export default function TransferScreen({ navigation }) {
   const [success, setSuccess] = useState(null);
 
   const amount = Number(montant);
-  const needsPin = amount >= PIN_THRESHOLD;
 
   const onSubmit = async () => {
     setError('');
@@ -36,8 +33,10 @@ export default function TransferScreen({ navigation }) {
       setError(t('transfer.errors.invalidAmount'));
       return;
     }
-    if (needsPin && !/^\d{4,6}$/.test(pin)) {
-      setError(t('transfer.errors.pinRequired', { amount: formatFcfa(PIN_THRESHOLD) }));
+    // Le code PIN AfriPay confirme désormais systématiquement tout transfert (le backend le
+    // rejette sans lui, quel que soit le montant) — ce n'est plus conditionné à un seuil.
+    if (!/^\d{4,6}$/.test(pin)) {
+      setError(t('transfer.errors.pinRequired'));
       return;
     }
     setLoading(true);
@@ -46,7 +45,7 @@ export default function TransferScreen({ navigation }) {
         telephoneDestinataire: telephoneDestinataire.trim(),
         montant: amount,
         libelle: libelle.trim() || undefined,
-        pin: needsPin ? pin : undefined,
+        pin,
       });
       setSuccess(result.transaction);
       setMontant('');
@@ -94,20 +93,16 @@ export default function TransferScreen({ navigation }) {
         onChangeText={setLibelle}
       />
 
-      {needsPin ? (
-        <>
-          <Text style={styles.pinNote}>{t('transfer.pinNote', { amount: formatFcfa(PIN_THRESHOLD) })}</Text>
-          <Input
-            label={t('transfer.pinLabel')}
-            placeholder="••••"
-            keyboardType="number-pad"
-            secureTextEntry
-            maxLength={6}
-            value={pin}
-            onChangeText={setPin}
-          />
-        </>
-      ) : null}
+      <Text style={styles.pinNote}>{t('transfer.pinNote')}</Text>
+      <Input
+        label={t('transfer.pinLabel')}
+        placeholder="••••"
+        keyboardType="number-pad"
+        secureTextEntry
+        maxLength={6}
+        value={pin}
+        onChangeText={setPin}
+      />
 
       <GradientButton title={t('transfer.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
     </ScreenContainer>

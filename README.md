@@ -31,6 +31,11 @@ IP différente sur le réseau Wi-Fi :
 Le fichier documente aussi les deux autres cas de figure (émulateur Android → `10.0.2.2`, simulateur iOS →
 `localhost`) via la constante `MODE`.
 
+**Build de production** : ces réglages (`LAN_IP`/`MODE`) ne s'appliquent qu'en développement. Pour un
+build de production (EAS Build), définissez `EXPO_PUBLIC_API_URL` (voir `.env.example`) avec une URL
+**https://** — le démarrage échoue volontairement si elle est absente ou non-HTTPS, pour éviter de faire
+transiter PIN, mot de passe et tokens en clair sur le réseau.
+
 ## À propos du "scan de paiement" (paume de main)
 
 Il n'existe pas de capteur biométrique palmaire réel dans ce projet. Le backend fournit un remplaçant

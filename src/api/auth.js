@@ -10,7 +10,7 @@ export const registerClient = ({ nom, prenom, telephone, email, motDePasse, otp 
 export const loginClient = (telephone, motDePasse) =>
   post('/auth/client/login', { telephone, motDePasse, ...getDeviceInfo() }, { auth: false });
 
-export const setClientPin = (pin) => post('/auth/client/pin', { pin });
+export const setClientPin = (pin, pinActuel) => post('/auth/client/pin', { pin, pinActuel });
 
 export const getMe = () => get('/auth/me');
 

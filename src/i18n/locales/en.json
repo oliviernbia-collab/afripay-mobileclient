@@ -191,7 +191,7 @@
     "amountPlaceholder": "e.g. 2000",
     "noteLabel": "Note (optional)",
     "notePlaceholder": "e.g. For rent",
-    "pinNote": "This amount requires your AfriPay PIN (mandatory from {{amount}}).",
+    "pinNote": "Your AfriPay PIN is required to confirm this transfer.",
     "pinLabel": "PIN code",
     "submit": "Send",
     "successTitle": "Transfer sent",
@@ -199,7 +199,7 @@
     "errors": {
       "recipientRequired": "Enter the recipient's AfriPay number.",
       "invalidAmount": "Enter a valid amount.",
-      "pinRequired": "Your PIN code is required for transfers of {{amount}} or more.",
+      "pinRequired": "Your AfriPay PIN (4 to 6 digits) is required.",
       "genericError": "Transfer failed."
     }
   },
@@ -434,9 +434,11 @@
     },
     "pinSetup": {
       "titleChange": "Change your PIN",
+      "titleCurrent": "Current PIN code",
       "titleCreate": "Create your PIN code",
       "titleConfirm": "Confirm your PIN code",
-      "subtitleCreate": "This 4-digit code will be requested to confirm transfers of 50,000 FCFA or more.",
+      "subtitleCurrent": "Enter your current PIN code to continue.",
+      "subtitleCreate": "This 4-digit code will be requested to confirm every transfer.",
       "subtitleConfirm": "Enter the same code again to confirm it.",
       "mismatchError": "The PIN codes don't match. Try again.",
       "saveError": "Unable to save the PIN."
