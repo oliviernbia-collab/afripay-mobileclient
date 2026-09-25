@@ -6,6 +6,7 @@ import ScreenContainer from '../components/ScreenContainer';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import ErrorBanner from '../components/ErrorBanner';
+import { useToast } from '../context/ToastContext';
 import { getMySessions, revokeSession } from '../api/devices';
 import { getDeviceInfo } from '../utils/deviceInfo';
 import { colors } from '../theme/colors';
@@ -13,6 +14,7 @@ import { formatDate } from '../utils/format';
 
 export default function AppareilsConnectesScreen() {
   const { t } = useTranslation();
+  const { showSuccess, showError } = useToast();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -50,8 +52,9 @@ export default function AppareilsConnectesScreen() {
             try {
               await revokeSession(session.id);
               setSessions((prev) => prev.filter((s) => s.id !== session.id));
+              showSuccess(t('appareils.revokeSuccess'));
             } catch (e) {
-              setError(e.message || t('appareils.revokeError'));
+              showError(e.message || t('appareils.revokeError'));
             } finally {
               setRevokingId(null);
             }

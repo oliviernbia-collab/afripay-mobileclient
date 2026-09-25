@@ -42,6 +42,7 @@
     "transactionsRecent": "Recent transactions",
     "noTransactions": "No transactions yet.",
     "loadError": "Unable to load the dashboard.",
+    "offlineBalance": "Offline — balance as of {{time}}",
     "actions": {
       "recharge": "Top up",
       "transfer": "Transfer",
@@ -90,10 +91,14 @@
       "removeConfirmText": "Do you want to go back to your initials?",
       "uploadError": "Unable to send the photo.",
       "removeError": "Unable to remove the photo.",
-      "genericError": "Error"
+      "genericError": "Error",
+      "uploadSuccess": "Profile photo updated.",
+      "removeSuccess": "Profile photo removed."
     },
     "biometricActivationCancelledTitle": "Activation cancelled",
-    "biometricActivationCancelledText": "Authentication could not be verified."
+    "biometricActivationCancelledText": "Authentication could not be verified.",
+    "biometricEnabledSuccess": "Biometric lock enabled.",
+    "biometricDisabledSuccess": "Biometric lock disabled."
   },
   "payer": {
     "title": "AfriPay payment scan",
@@ -241,6 +246,7 @@
     "revokeConfirmText": "Do you want to disconnect \"{{device}}\"? It will need to reconnect to access your account.",
     "revoke": "Disconnect",
     "revokeError": "Unable to disconnect this device.",
+    "revokeSuccess": "Device disconnected.",
     "loadError": "Unable to load connected devices."
   },
   "kyc": {

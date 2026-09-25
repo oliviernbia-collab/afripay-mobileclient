@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../api/notifications';
+import { ApiError } from '../api/client';
+import { enqueueMarkRead } from '../utils/offlineReadQueue';
 import { colors } from '../theme/colors';
 import { formatDate } from '../utils/format';
 
@@ -51,9 +53,16 @@ export default function NotificationsScreen() {
     setItems((prev) => prev.map((n) => (n.id === item.id ? { ...n, lu: 1 } : n)));
     try {
       await markNotificationRead(item.id);
-    } catch {
-      // best-effort — revert on failure
-      setItems((prev) => prev.map((n) => (n.id === item.id ? { ...n, lu: 0 } : n)));
+    } catch (e) {
+      if (e instanceof ApiError) {
+        // Le serveur a répondu et a refusé — l'optimisme n'était pas justifié, on revient en arrière.
+        setItems((prev) => prev.map((n) => (n.id === item.id ? { ...n, lu: 0 } : n)));
+      } else {
+        // Échec réseau (fetch a rejeté avant même d'atteindre le serveur) : on garde l'affichage
+        // "lu" tel que l'utilisateur l'a vu, et on met l'action de côté pour la rejouer dès que la
+        // connexion revient (voir utils/offlineReadQueue.js) plutôt que de la perdre silencieusement.
+        await enqueueMarkRead(item.id);
+      }
     }
   };
 

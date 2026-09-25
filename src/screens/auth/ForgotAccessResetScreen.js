@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Card from '../../components/Card';
 import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
 import ErrorBanner from '../../components/ErrorBanner';
+import { useToast } from '../../context/ToastContext';
 import { resetClientPin, resetClientPassword } from '../../api/auth';
 import { colors, radius } from '../../theme/colors';
 
@@ -14,6 +15,7 @@ import { colors, radius } from '../../theme/colors';
 // reconnecter, d'où le retour à l'écran de connexion plutôt qu'une reconnexion automatique.
 export default function ForgotAccessResetScreen({ navigation, route }) {
   const { t } = useTranslation();
+  const { showSuccess } = useToast();
   const { type, telephone, devCode } = route.params;
   const isPin = type === 'pin';
   const [otp, setOtp] = useState('');
@@ -40,17 +42,15 @@ export default function ForgotAccessResetScreen({ navigation, route }) {
     try {
       if (isPin) {
         await resetClientPin(telephone, otp.trim(), secret);
-        Alert.alert(t('forgotAccess.successTitle'), t('forgotAccess.successTextPin'), [
-          // Revient à Paramètres (Paramètres -> PinSetup -> ForgotAccessPhone -> ici) plutôt
-          // qu'à l'étape "PIN actuel" de PinSetup, désormais sans objet puisque le PIN vient
-          // d'être remplacé par cette réinitialisation.
-          { text: t('common.ok'), onPress: () => navigation.pop(3) },
-        ]);
+        showSuccess(t('forgotAccess.successTextPin'));
+        // Revient à Paramètres (Paramètres -> PinSetup -> ForgotAccessPhone -> ici) plutôt
+        // qu'à l'étape "PIN actuel" de PinSetup, désormais sans objet puisque le PIN vient
+        // d'être remplacé par cette réinitialisation.
+        navigation.pop(3);
       } else {
         await resetClientPassword(telephone, otp.trim(), secret);
-        Alert.alert(t('forgotAccess.successTitle'), t('forgotAccess.successTextPassword'), [
-          { text: t('common.ok'), onPress: () => navigation.reset({ index: 0, routes: [{ name: 'Login' }] }) },
-        ]);
+        showSuccess(t('forgotAccess.successTextPassword'));
+        navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
       }
     } catch (e) {
       setError(e.message || t('forgotAccess.error'));

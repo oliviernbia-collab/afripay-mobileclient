@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../../components/ScreenContainer';
 import Card from '../../components/Card';
@@ -7,17 +7,18 @@ import Input from '../../components/Input';
 import GradientButton from '../../components/GradientButton';
 import ErrorBanner from '../../components/ErrorBanner';
 import Icon from '../../components/Icon';
+import { useToast } from '../../context/ToastContext';
 import { requestClientOtp } from '../../api/auth';
 import { colors, radius } from '../../theme/colors';
 
 export default function RegisterPhoneScreen({ navigation }) {
   const { t } = useTranslation();
+  const { showInfo } = useToast();
   const [telephone, setTelephone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const comingSoon = (provider) =>
-    Alert.alert(t('auth.registerPhone.comingSoonTitle'), t('auth.registerPhone.comingSoonText', { provider }));
+  const comingSoon = (provider) => showInfo(t('auth.registerPhone.comingSoonText', { provider }));
 
   const onSubmit = async () => {
     setError('');

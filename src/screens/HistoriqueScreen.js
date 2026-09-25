@@ -101,21 +101,23 @@ export default function HistoriqueScreen({ navigation }) {
         <Text style={styles.title}>{t('historique.title')}</Text>
       </View>
 
-      <View style={styles.chipsRow}>
-        {TYPE_CHIPS.map((c) => (
-          <Chip key={c.labelKey} label={t(c.labelKey)} active={type === c.key} onPress={() => setType(c.key)} />
-        ))}
-      </View>
-      <View style={styles.chipsRow}>
-        {STATUT_CHIPS.map((c) => (
-          <Chip key={c.labelKey} label={t(c.labelKey)} active={statut === c.key} onPress={() => setStatut(c.key)} />
-        ))}
-      </View>
-      <View style={styles.chipsRow}>
-        {PERIOD_CHIPS.map((c) => (
-          <Chip key={c.labelKey} label={t(c.labelKey)} active={period === c.key} onPress={() => setPeriod(c.key)} />
-        ))}
-      </View>
+      <Card style={styles.filtersCard}>
+        <View style={styles.chipsRow}>
+          {TYPE_CHIPS.map((c) => (
+            <Chip key={c.labelKey} label={t(c.labelKey)} active={type === c.key} onPress={() => setType(c.key)} />
+          ))}
+        </View>
+        <View style={styles.chipsRow}>
+          {STATUT_CHIPS.map((c) => (
+            <Chip key={c.labelKey} label={t(c.labelKey)} active={statut === c.key} onPress={() => setStatut(c.key)} />
+          ))}
+        </View>
+        <View style={[styles.chipsRow, { marginBottom: 0 }]}>
+          {PERIOD_CHIPS.map((c) => (
+            <Chip key={c.labelKey} label={t(c.labelKey)} active={period === c.key} onPress={() => setPeriod(c.key)} />
+          ))}
+        </View>
+      </Card>
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -159,8 +161,9 @@ export default function HistoriqueScreen({ navigation }) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: { paddingHorizontal: 20, paddingTop: 10 },
-  title: { color: colors.white, fontSize: 22, fontWeight: '700', marginBottom: 12 },
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, marginBottom: 8 },
+  title: { color: colors.white, fontSize: 22, fontWeight: '700', marginBottom: 4 },
+  filtersCard: { marginHorizontal: 20, marginBottom: 12, padding: 12 },
+  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 },
   chip: {
     borderWidth: 1,
     borderColor: colors.border,

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Text, StyleSheet, Alert } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../components/ScreenContainer';
 import Card from '../components/Card';
 import Input from '../components/Input';
 import GradientButton from '../components/GradientButton';
 import ErrorBanner from '../components/ErrorBanner';
+import { useToast } from '../context/ToastContext';
 import { changeClientPassword } from '../api/auth';
 import { colors, radius } from '../theme/colors';
 
@@ -14,6 +15,7 @@ import { colors, radius } from '../theme/colors';
 // volée suffise à en prendre le contrôle durable sans jamais l'avoir connu.
 export default function ChangePasswordScreen({ navigation }) {
   const { t } = useTranslation();
+  const { showSuccess } = useToast();
   const [motDePasseActuel, setMotDePasseActuel] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [confirmation, setConfirmation] = useState('');
@@ -37,9 +39,8 @@ export default function ChangePasswordScreen({ navigation }) {
     setLoading(true);
     try {
       await changeClientPassword(motDePasseActuel, motDePasse);
-      Alert.alert(t('changePassword.successTitle'), t('changePassword.successText'), [
-        { text: t('common.ok'), onPress: () => navigation.goBack() },
-      ]);
+      showSuccess(t('changePassword.successText'));
+      navigation.goBack();
     } catch (e) {
       setError(e.message || t('changePassword.error'));
     } finally {

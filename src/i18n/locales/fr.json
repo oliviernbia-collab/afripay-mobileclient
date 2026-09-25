@@ -42,6 +42,7 @@
     "transactionsRecent": "Transactions récentes",
     "noTransactions": "Aucune transaction pour le moment.",
     "loadError": "Impossible de charger le tableau de bord.",
+    "offlineBalance": "Hors ligne — solde du {{time}}",
     "actions": {
       "recharge": "Recharger",
       "transfer": "Transférer",
@@ -90,10 +91,14 @@
       "removeConfirmText": "Voulez-vous revenir à vos initiales ?",
       "uploadError": "Impossible d'envoyer la photo.",
       "removeError": "Impossible de retirer la photo.",
-      "genericError": "Erreur"
+      "genericError": "Erreur",
+      "uploadSuccess": "Photo de profil mise à jour.",
+      "removeSuccess": "Photo de profil retirée."
     },
     "biometricActivationCancelledTitle": "Activation annulée",
-    "biometricActivationCancelledText": "L'authentification n'a pas pu être vérifiée."
+    "biometricActivationCancelledText": "L'authentification n'a pas pu être vérifiée.",
+    "biometricEnabledSuccess": "Verrouillage biométrique activé.",
+    "biometricDisabledSuccess": "Verrouillage biométrique désactivé."
   },
   "payer": {
     "title": "Scan de paiement AfriPay",
@@ -241,6 +246,7 @@
     "revokeConfirmText": "Voulez-vous déconnecter \"{{device}}\" ? Il devra se reconnecter pour accéder à votre compte.",
     "revoke": "Déconnecter",
     "revokeError": "Impossible de déconnecter cet appareil.",
+    "revokeSuccess": "Appareil déconnecté.",
     "loadError": "Impossible de charger les appareils connectés."
   },
   "kyc": {

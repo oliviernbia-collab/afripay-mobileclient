@@ -18,8 +18,13 @@ import { colors, providerBrand, providerLabel } from '../theme/colors';
 import { formatFcfa } from '../utils/format';
 import { ApiError } from '../api/client';
 
+// Djamo est une carte prépayée, comme Visa — pas un wallet Mobile Money identifié par un numéro
+// de téléphone (wave/orange_money/moov_money/mtn_money) : même traitement pour les deux (saisie
+// des 4 derniers chiffres, affichage masqué), voir aussi paymentMethodService.js côté backend.
+const CARD_PROVIDERS = ['visa', 'djamo'];
+
 function maskMethod(fournisseur, identifiant) {
-  return fournisseur === 'visa' ? `•••• ${identifiant}` : identifiant;
+  return CARD_PROVIDERS.includes(fournisseur) ? `•••• ${identifiant}` : identifiant;
 }
 
 export default function RechargeScreen({ navigation }) {
@@ -73,12 +78,12 @@ export default function RechargeScreen({ navigation }) {
 
   const onSaveMethod = async () => {
     setMethodError('');
-    const isVisa = selected === 'visa';
-    if (isVisa && !/^\d{4}$/.test(newIdentifiant.trim())) {
+    const isCard = CARD_PROVIDERS.includes(selected);
+    if (isCard && !/^\d{4}$/.test(newIdentifiant.trim())) {
       setMethodError(t('recharge.errors.last4Required'));
       return;
     }
-    if (!isVisa && !newIdentifiant.trim()) {
+    if (!isCard && !newIdentifiant.trim()) {
       setMethodError(t('recharge.errors.numberRequired'));
       return;
     }
@@ -129,7 +134,7 @@ export default function RechargeScreen({ navigation }) {
     }
   };
 
-  const isVisa = selected === 'visa';
+  const isCard = CARD_PROVIDERS.includes(selected);
 
   return (
     <ScreenContainer scroll>
@@ -193,7 +198,7 @@ export default function RechargeScreen({ navigation }) {
               {methods.map((m) => (
                 <IconRow
                   key={m.id}
-                  icon={isVisa ? 'credit-card' : 'mobile-screen'}
+                  icon={isCard ? 'credit-card' : 'mobile-screen'}
                   iconColor={providerBrand[selected]?.color || colors.turquoise}
                   label={maskMethod(m.fournisseur, m.identifiant)}
                   subtitle={m.libelle || undefined}
@@ -212,16 +217,16 @@ export default function RechargeScreen({ navigation }) {
                 <Pressable onPress={() => setShowAddForm(true)} style={styles.addLink}>
                   <Icon name="plus" size={12} color={colors.blue} />
                   <Text style={styles.addLinkText}>
-                    {isVisa ? t('recharge.addAnotherCard') : t('recharge.addAnotherNumber')}
+                    {isCard ? t('recharge.addAnotherCard') : t('recharge.addAnotherNumber')}
                   </Text>
                 </Pressable>
               ) : (
                 <Card style={styles.addCard}>
                   <Input
-                    label={isVisa ? t('recharge.cardLast4Label') : t('recharge.phoneNumberLabel', { provider: providerLabel(selected, t) })}
-                    placeholder={isVisa ? t('recharge.cardPlaceholder') : t('recharge.phonePlaceholder')}
-                    keyboardType={isVisa ? 'number-pad' : 'phone-pad'}
-                    maxLength={isVisa ? 4 : undefined}
+                    label={isCard ? t('recharge.cardLast4Label') : t('recharge.phoneNumberLabel', { provider: providerLabel(selected, t) })}
+                    placeholder={isCard ? t('recharge.cardPlaceholder') : t('recharge.phonePlaceholder')}
+                    keyboardType={isCard ? 'number-pad' : 'phone-pad'}
+                    maxLength={isCard ? 4 : undefined}
                     value={newIdentifiant}
                     onChangeText={setNewIdentifiant}
                   />

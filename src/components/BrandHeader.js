@@ -14,16 +14,24 @@ const LOGO_COMPACT = require('../../assets/logo-compact.png');
  * splash/login screen (size="large") and the dashboard header
  * (size="compact").
  */
+const SIZES = {
+  large: { width: 220, height: 188 },
+  compact: { width: 120, height: 102 },
+  // Section 10.3 du cahier des charges : le logo doit aussi apparaître dans l'en-tête du tableau
+  // de bord — trop petit pour "compact" (pensé pour un bloc de page pleine largeur, ex.
+  // AboutScreen), ce format tient dans la ligne d'en-tête à côté du menu/de la cloche.
+  icon: { width: 34, height: 29 },
+};
+
 export default function BrandHeader({ size = 'large', showTagline = true, style }) {
   const { t } = useTranslation();
-  const isLarge = size === 'large';
-  const logoWidth = isLarge ? 220 : 120;
-  const logoHeight = isLarge ? 188 : 102; // matches source aspect ratio (~1.17:1)
+  const { width: logoWidth, height: logoHeight } = SIZES[size] || SIZES.large;
+  const source = size === 'large' ? LOGO_MAIN : LOGO_COMPACT;
 
   return (
     <View style={[styles.container, style]}>
       <Image
-        source={isLarge ? LOGO_MAIN : LOGO_COMPACT}
+        source={source}
         style={{ width: logoWidth, height: logoHeight }}
         resizeMode="contain"
         accessibilityLabel="AfriPay"

@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
+import BrandHeader from '../components/BrandHeader';
 import StatusBadge from '../components/StatusBadge';
 import TxTypeIcon from '../components/TxTypeIcon';
 import SideMenu from '../components/SideMenu';
@@ -13,8 +14,11 @@ import { useAuth } from '../context/AuthContext';
 import { getMyWallet, getMyHistory } from '../api/wallet';
 import { getKycStatus } from '../api/kyc';
 import { getBiometricStatus } from '../api/biometrie';
+import { getCached, setCached } from '../utils/offlineCache';
 import { colors, kycStatusColor, kycStatusLabel, statutColor, statutLabel, txDisplayTitle } from '../theme/colors';
 import { formatFcfa, formatDate } from '../utils/format';
+
+const WALLET_CACHE_KEY = 'wallet';
 
 const QUICK_ACTIONS = [
   { key: 'Recharge', labelKey: 'dashboard.actions.recharge', color: colors.orange, icon: 'plus' },
@@ -34,6 +38,11 @@ export default function DashboardScreen({ navigation }) {
   const [error, setError] = useState('');
   const [balanceHidden, setBalanceHidden] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  // Support hors-ligne partiel (cahier des charges 9.4) : dernier solde connu affiché
+  // immédiatement depuis le cache local le temps que le réseau réponde, et conservé (avec son
+  // horodatage) si l'appel échoue faute de connexion plutôt que de retomber sur "—".
+  const [walletCachedAt, setWalletCachedAt] = useState(null);
+  const [offline, setOffline] = useState(false);
 
   const load = useCallback(async () => {
     setError('');
@@ -48,8 +57,20 @@ export default function DashboardScreen({ navigation }) {
       setKyc(k);
       setEnrolled(b.enrolled);
       setRecent(hist);
+      setOffline(false);
+      setWalletCachedAt(null);
+      setCached(WALLET_CACHE_KEY, w);
     } catch (e) {
-      setError(e.message || t('dashboard.loadError'));
+      const cached = await getCached(WALLET_CACHE_KEY);
+      if (cached) {
+        // Hors-ligne (ou serveur injoignable) mais un solde connu existe : on le montre plutôt
+        // qu'une erreur bloquante — l'utilisateur sait au moins où il en était.
+        setWallet(cached.value);
+        setWalletCachedAt(cached.cachedAt);
+        setOffline(true);
+      } else {
+        setError(e.message || t('dashboard.loadError'));
+      }
     }
   }, [t]);
 
@@ -81,6 +102,12 @@ export default function DashboardScreen({ navigation }) {
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
       >
+        {/* Section 10.3 du cahier des charges : le logo doit apparaître dans l'en-tête du
+            tableau de bord (déjà présent sur le splash screen et la page de connexion). */}
+        <View style={styles.brandRow}>
+          <BrandHeader size="icon" showTagline={false} />
+        </View>
+
         <View style={styles.header}>
           <Pressable onPress={() => setMenuVisible(true)} style={styles.menuTrigger} hitSlop={8}>
             <Icon name="bars" size={15} color={colors.white} />
@@ -110,6 +137,14 @@ export default function DashboardScreen({ navigation }) {
           <Text style={styles.balanceValue}>
             {!wallet ? '—' : balanceHidden ? '•••••• FCFA' : formatFcfa(wallet.solde)}
           </Text>
+          {offline && walletCachedAt ? (
+            <View style={styles.offlineRow}>
+              <Icon name="wifi" size={11} color={colors.gold} />
+              <Text style={styles.offlineText}>
+                {t('dashboard.offlineBalance', { time: formatDate(new Date(walletCachedAt).toISOString()) })}
+              </Text>
+            </View>
+          ) : null}
           {kyc ? (
             <View style={{ marginTop: 12 }}>
               <StatusBadge
@@ -192,6 +227,7 @@ export default function DashboardScreen({ navigation }) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   content: { padding: 20, paddingBottom: 40 },
+  brandRow: { alignItems: 'center', marginTop: 4, marginBottom: 10 },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 20, gap: 8 },
   bell: {
     width: 40,
@@ -221,6 +257,8 @@ const styles = StyleSheet.create({
   balanceHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   balanceLabel: { color: colors.textSecondary, fontSize: 13 },
   balanceValue: { color: colors.white, fontSize: 32, fontWeight: '800', marginTop: 6 },
+  offlineRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
+  offlineText: { color: colors.gold, fontSize: 11.5, fontWeight: '600' },
   kycBanner: { marginBottom: 16, borderColor: colors.gold },
   kycBannerTitle: { color: colors.gold, fontWeight: '700', marginBottom: 4 },
   kycBannerText: { color: colors.textSecondary, fontSize: 13, lineHeight: 18 },

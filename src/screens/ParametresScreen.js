@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { colors, kycStatusColor, kycStatusLabel } from '../theme/colors';
 import StatusBadge from '../components/StatusBadge';
 import { resolveMediaUrl } from '../config/api';
@@ -33,6 +34,7 @@ function MenuItem({ icon, label, onPress, danger }) {
 // hardware/enrollment — so Paramètres never shows an empty "Sécurité" card.
 function BiometricLockSection() {
   const { t } = useTranslation();
+  const { showWarning, showSuccess } = useToast();
   const [available, setAvailable] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -53,12 +55,13 @@ function BiometricLockSection() {
         // verrouillage, pour ne jamais risquer de bloquer l'accès à son propre compte.
         const ok = await promptBiometricUnlock();
         if (!ok) {
-          Alert.alert(t('parametres.biometricActivationCancelledTitle'), t('parametres.biometricActivationCancelledText'));
+          showWarning(t('parametres.biometricActivationCancelledText'));
           return;
         }
       }
       await setBiometricLockEnabled(next);
       setEnabled(next);
+      showSuccess(t(next ? 'parametres.biometricEnabledSuccess' : 'parametres.biometricDisabledSuccess'));
     } finally {
       setBusy(false);
     }
@@ -96,6 +99,7 @@ function BiometricLockSection() {
 function ProfileAvatar({ user }) {
   const { t } = useTranslation();
   const { refreshUser } = useAuth();
+  const { showWarning, showError, showSuccess } = useToast();
   const [uploading, setUploading] = useState(false);
 
   const pickAndUpload = async (fromCamera) => {
@@ -103,7 +107,7 @@ function ProfileAvatar({ user }) {
       ? await ImagePicker.requestCameraPermissionsAsync()
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert(t('parametres.photo.permissionDeniedTitle'), t('parametres.photo.permissionDeniedText'));
+      showWarning(t('parametres.photo.permissionDeniedText'));
       return;
     }
     const result = fromCamera
@@ -115,8 +119,9 @@ function ProfileAvatar({ user }) {
     try {
       await uploadMyPhoto(result.assets[0].uri);
       await refreshUser();
+      showSuccess(t('parametres.photo.uploadSuccess'));
     } catch (e) {
-      Alert.alert(t('parametres.photo.genericError'), e.message || t('parametres.photo.uploadError'));
+      showError(e.message || t('parametres.photo.uploadError'));
     } finally {
       setUploading(false);
     }
@@ -133,8 +138,9 @@ function ProfileAvatar({ user }) {
           try {
             await removeMyPhoto();
             await refreshUser();
+            showSuccess(t('parametres.photo.removeSuccess'));
           } catch (e) {
-            Alert.alert(t('parametres.photo.genericError'), e.message || t('parametres.photo.removeError'));
+            showError(e.message || t('parametres.photo.removeError'));
           } finally {
             setUploading(false);
           }
