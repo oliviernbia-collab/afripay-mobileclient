@@ -302,7 +302,7 @@
     "enroll": {
       "title": "Palm enrollment",
       "subtitle": "Last step: we generate your AfriPay payment code, the digital equivalent of your palm, used to pay merchants with no cash or card.",
-      "capturing": "Capturing...",
+      "cameraPermission": "Allow camera access to photograph your palm.",
       "readyTitle": "Your AfriPay payment code is ready",
       "readyText": "Head to the \"Pay\" tab to show your QR code to AfriPay merchants.",
       "viewCode": "View my payment code",

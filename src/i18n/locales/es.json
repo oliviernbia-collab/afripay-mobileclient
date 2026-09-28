@@ -302,7 +302,7 @@
     "enroll": {
       "title": "Registro de la palma",
       "subtitle": "Último paso: generamos su código de pago AfriPay, el equivalente digital de su palma, usado para pagar en comercios sin efectivo ni tarjeta.",
-      "capturing": "Capturando...",
+      "cameraPermission": "Autorice el acceso a la cámara para fotografiar su palma.",
       "readyTitle": "Su código de pago AfriPay está listo",
       "readyText": "Vaya a la pestaña \"Pagar\" para mostrar su código QR a los comercios AfriPay.",
       "viewCode": "Ver mi código de pago",

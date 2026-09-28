@@ -302,7 +302,7 @@
     "enroll": {
       "title": "Enrôlement de la paume",
       "subtitle": "Dernière étape : nous générons votre code de paiement AfriPay, l'équivalent numérique de votre paume, utilisé pour payer chez les marchands sans espèces ni carte.",
-      "capturing": "Capture en cours...",
+      "cameraPermission": "Autorisez l'accès à la caméra pour photographier votre paume.",
       "readyTitle": "Votre code de paiement AfriPay est prêt",
       "readyText": "Rendez-vous sur l'onglet \"Payer\" pour présenter votre QR code aux marchands AfriPay.",
       "viewCode": "Voir mon code de paiement",
