@@ -18,7 +18,7 @@ const TYPE_ICONS = {
 };
 
 export default function NotificationsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [items, setItems] = useState([]);
   const [tab, setTab] = useState('toutes');
   const [loading, setLoading] = useState(true);
@@ -107,6 +107,11 @@ export default function NotificationsScreen() {
         <FlatList
           data={tab === 'non_lues' ? items.filter((n) => !n.lu) : items}
           keyExtractor={(item) => item.id}
+          // FlatList mémorise ses lignes et ne les redessine QUE si `data` change de référence ou
+          // si `extraData` change — sans ça, changer de langue en restant sur cet écran ne
+          // ré-exécutait pas notificationText() pour les lignes déjà montées (même si le reste de
+          // l'écran, lui, se re-rendait correctement avec la nouvelle langue).
+          extraData={i18n.language}
           contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
           ListEmptyComponent={

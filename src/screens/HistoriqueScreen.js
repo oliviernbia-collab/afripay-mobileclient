@@ -51,7 +51,7 @@ const PERIOD_CHIPS = [
 ];
 
 export default function HistoriqueScreen({ navigation }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [items, setItems] = useState([]);
   const [walletId, setWalletId] = useState(null);
   const [type, setType] = useState(undefined);
@@ -127,6 +127,11 @@ export default function HistoriqueScreen({ navigation }) {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
+          // Sans extraData, FlatList mémorise ses lignes et ne les redessine pas juste parce que
+          // la langue a changé (voir NotificationsScreen.js pour le même correctif) — txDisplayTitle
+          // dépend de `t`, donc les titres de transaction restaient figés en cas de changement de
+          // langue sans navigation hors de cet écran.
+          extraData={i18n.language}
           contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
           ListEmptyComponent={<Text style={styles.emptyText}>{t('historique.empty')}</Text>}
