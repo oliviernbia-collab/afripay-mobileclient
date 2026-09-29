@@ -130,7 +130,9 @@
     "receivedFrom": "Received from {{name}}",
     "sentTo": "Sent to {{name}}",
     "transferReceived": "Transfer received",
-    "transferSent": "Transfer sent"
+    "transferSent": "Transfer sent",
+    "purchaseAt": "Purchase at {{name}}",
+    "rechargeVia": "Top-up via {{provider}}"
   },
   "historiqueDetail": {
     "typeLabel": "Type",
@@ -148,7 +150,8 @@
     "titleTransferReceived": "Transfer received",
     "titleTransferSent": "Transfer sent",
     "counterpartyLabel": "Contact",
-    "numberLabel": "Number"
+    "numberLabel": "Number",
+    "providerLabel": "Provider"
   },
   "notifications": {
     "title": "Notifications",
@@ -158,6 +161,19 @@
     "emptyUnread": "No unread notifications.",
     "emptyAll": "No notifications.",
     "loadError": "Unable to load notifications."
+  },
+  "notif": {
+    "welcome": { "title": "Welcome to AfriPay", "body": "Your account has been created. Complete your KYC to unlock palm payment." },
+    "transferReceived": { "title": "Transfer received", "body": "You received {{montant}} FCFA on your AfriPay account." },
+    "paymentRefused": { "title": "Payment declined", "body": "Payment attempt of {{montant}} FCFA declined: insufficient balance." },
+    "paymentAccepted": { "title": "Payment completed", "body": "Payment of {{montant}} FCFA accepted at {{marchand}}." },
+    "kycUpdate": {
+      "title": "Your KYC file has been updated",
+      "validated": "Your KYC file has been approved. Palm payment is now active.",
+      "other": "Your KYC file has been {{decision}}. {{motif}}"
+    },
+    "rechargeConfirmed": { "title": "Top-up confirmed", "body": "Your top-up of {{montant}} FCFA has been confirmed and added to your balance." },
+    "rechargeFailed": { "title": "Top-up failed", "body": "Your top-up of {{montant}} FCFA failed. No amount was debited." }
   },
   "recharge": {
     "title": "Top up my account",
@@ -178,6 +194,9 @@
     "successTitle": "Top-up successful",
     "successAdded": "{{amount}} added via {{provider}}.",
     "successNewBalance": "New balance: {{balance}}",
+    "pendingTitle": "Payment in progress",
+    "pendingText": "Complete the {{amount}} payment on the {{provider}} page that just opened. Your balance will update as soon as the payment is confirmed.",
+    "reopenPaymentPage": "Reopen the payment page",
     "errors": {
       "chooseMethodRequired": "Choose a top-up method.",
       "registerFirst": "First register your {{provider}} before topping up.",
@@ -186,7 +205,8 @@
       "methodsLoadError": "Unable to load your payment methods.",
       "last4Required": "Enter exactly the last 4 digits of the card.",
       "numberRequired": "Enter the number linked to this account.",
-      "methodSaveError": "Unable to save this payment method."
+      "methodSaveError": "Unable to save this payment method.",
+      "openPaymentPageError": "Unable to open the payment page. Please try again."
     }
   },
   "transfer": {
@@ -309,7 +329,9 @@
       "regenerate": "Regenerate code",
       "infoText": "Place your hand in front of the camera and follow the instructions to generate your payment code.",
       "launch": "Start enrollment",
-      "error": "Enrollment failed."
+      "error": "Enrollment failed.",
+      "statusError": "Unable to check your enrollment right now — your payment code is probably not lost, try again rather than regenerating it.",
+      "retry": "Retry"
     }
   },
   "appLockGate": {

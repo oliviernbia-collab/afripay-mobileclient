@@ -5,7 +5,7 @@ import ScreenContainer from '../components/ScreenContainer';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
 import StatusBadge from '../components/StatusBadge';
-import { colors, statutColor, statutLabel, txTypeLabel, txMethodLabel } from '../theme/colors';
+import { colors, statutColor, statutLabel, txTypeLabel, txMethodLabel, providerLabel } from '../theme/colors';
 import { formatFcfa, formatDate } from '../utils/format';
 
 function Row({ label, value }) {
@@ -73,10 +73,20 @@ export default function HistoriqueDetailScreen({ route }) {
         {transaction.contrepartie?.telephone ? (
           <Row label={t('historiqueDetail.numberLabel')} value={transaction.contrepartie.telephone} />
         ) : null}
+        {transaction.contrepartie?.fournisseur ? (
+          <Row label={t('historiqueDetail.providerLabel')} value={providerLabel(transaction.contrepartie.fournisseur, t)} />
+        ) : null}
         <Row label={t('historiqueDetail.referenceLabel')} value={transaction.reference || '—'} />
         <Row label={t('historiqueDetail.dateLabel')} value={formatDate(transaction.date_heure)} />
         {transaction.frais ? <Row label={t('historiqueDetail.feesLabel')} value={formatFcfa(transaction.frais)} /> : null}
-        {transaction.libelle ? <Row label={t('historiqueDetail.noteLabel')} value={transaction.libelle} /> : null}
+        {/* La note d'un virement interne est un texte libre saisi par l'expéditeur (toujours affiché
+            tel quel, ce n'est pas un texte traduit par le serveur) ; pour achat/recharge/virement
+            externe, `libelle` est un rendu serveur déjà traduit et figé — l'info équivalente est
+            déjà reconstruite ci-dessus (contrepartie/fournisseur), donc pas de repli sur ce texte
+            frozen ici. */}
+        {transaction.type === 'transfert' && !transaction.contrepartie?.externe && transaction.libelle ? (
+          <Row label={t('historiqueDetail.noteLabel')} value={transaction.libelle} />
+        ) : null}
       </Card>
 
       <Pressable onPress={onShare} style={styles.shareBtn}>

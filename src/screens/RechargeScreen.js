@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import ScreenContainer from '../components/ScreenContainer';
 import Input from '../components/Input';
@@ -123,6 +123,14 @@ export default function RechargeScreen({ navigation }) {
       const result = await recharge(selected, amount, selectedMethodId);
       setSuccess(result);
       setMontant('');
+      // Le paiement se termine sur une page MoneyFusion hébergée (choix de l'opérateur, saisie du
+      // code Mobile Money) — le wallet n'est crédité qu'une fois le paiement confirmé (webhook),
+      // pas à cet instant. On ouvre donc cette page plutôt que d'afficher un nouveau solde.
+      if (result.paymentUrl) {
+        Linking.openURL(result.paymentUrl).catch(() => {
+          setError(t('recharge.errors.openPaymentPageError'));
+        });
+      }
     } catch (e) {
       if (e instanceof ApiError && e.status === 403) {
         setCapError(e.message);
@@ -155,16 +163,19 @@ export default function RechargeScreen({ navigation }) {
 
       {success ? (
         <Card style={styles.successCard}>
-          <Text style={styles.successTitle}>{t('recharge.successTitle')}</Text>
+          <Text style={styles.successTitle}>{t('recharge.pendingTitle')}</Text>
           <Text style={styles.successText}>
-            {t('recharge.successAdded', {
+            {t('recharge.pendingText', {
               amount: formatFcfa(success.transaction.montant),
               provider: providerLabel(selected, t),
             })}
           </Text>
-          <Text style={styles.successText}>
-            {t('recharge.successNewBalance', { balance: formatFcfa(success.wallet.solde) })}
-          </Text>
+          {success.paymentUrl ? (
+            <Pressable onPress={() => Linking.openURL(success.paymentUrl)} style={styles.reopenLink}>
+              <Icon name="arrow-up-right-from-square" size={12} color={colors.blue} />
+              <Text style={styles.reopenLinkText}>{t('recharge.reopenPaymentPage')}</Text>
+            </Pressable>
+          ) : null}
         </Card>
       ) : null}
 
@@ -275,6 +286,8 @@ const styles = StyleSheet.create({
   successCard: { borderColor: colors.success, marginBottom: 16 },
   successTitle: { color: colors.success, fontWeight: '700', marginBottom: 6 },
   successText: { color: colors.white, fontSize: 13, marginBottom: 2 },
+  reopenLink: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10 },
+  reopenLinkText: { color: colors.blue, fontWeight: '600', fontSize: 13 },
   methodSection: { marginTop: 16, marginBottom: 8 },
   addLink: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8 },
   addLinkText: { color: colors.blue, fontWeight: '600', fontSize: 13 },

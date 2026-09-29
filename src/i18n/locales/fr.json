@@ -130,7 +130,9 @@
     "receivedFrom": "Reçu de {{name}}",
     "sentTo": "Envoyé à {{name}}",
     "transferReceived": "Transfert reçu",
-    "transferSent": "Transfert envoyé"
+    "transferSent": "Transfert envoyé",
+    "purchaseAt": "Achat chez {{name}}",
+    "rechargeVia": "Recharge via {{provider}}"
   },
   "historiqueDetail": {
     "typeLabel": "Type",
@@ -148,7 +150,8 @@
     "titleTransferReceived": "Transfert reçu",
     "titleTransferSent": "Transfert envoyé",
     "counterpartyLabel": "Contact",
-    "numberLabel": "Numéro"
+    "numberLabel": "Numéro",
+    "providerLabel": "Fournisseur"
   },
   "notifications": {
     "title": "Notifications",
@@ -158,6 +161,19 @@
     "emptyUnread": "Aucune notification non lue.",
     "emptyAll": "Aucune notification.",
     "loadError": "Impossible de charger les notifications."
+  },
+  "notif": {
+    "welcome": { "title": "Bienvenue sur AfriPay", "body": "Votre compte a été créé. Complétez votre KYC pour débloquer le paiement par paume de main." },
+    "transferReceived": { "title": "Transfert reçu", "body": "Vous avez reçu {{montant}} FCFA sur votre compte AfriPay." },
+    "paymentRefused": { "title": "Paiement refusé", "body": "Tentative de paiement de {{montant}} FCFA refusée : solde insuffisant." },
+    "paymentAccepted": { "title": "Paiement effectué", "body": "Paiement de {{montant}} FCFA accepté chez {{marchand}}." },
+    "kycUpdate": {
+      "title": "Mise à jour de votre dossier KYC",
+      "validated": "Votre dossier KYC a été validé. Le paiement par paume de main est activé.",
+      "other": "Votre dossier KYC a été {{decision}}. {{motif}}"
+    },
+    "rechargeConfirmed": { "title": "Recharge confirmée", "body": "Votre recharge de {{montant}} FCFA a été confirmée et ajoutée à votre solde." },
+    "rechargeFailed": { "title": "Recharge échouée", "body": "Votre recharge de {{montant}} FCFA a échoué. Aucun montant n'a été débité." }
   },
   "recharge": {
     "title": "Recharger mon compte",
@@ -178,6 +194,9 @@
     "successTitle": "Recharge réussie",
     "successAdded": "{{amount}} ajoutés via {{provider}}.",
     "successNewBalance": "Nouveau solde : {{balance}}",
+    "pendingTitle": "Paiement en cours",
+    "pendingText": "Terminez le paiement de {{amount}} sur la page {{provider}} qui vient de s'ouvrir. Votre solde sera mis à jour dès la confirmation du paiement.",
+    "reopenPaymentPage": "Rouvrir la page de paiement",
     "errors": {
       "chooseMethodRequired": "Choisissez un moyen de recharge.",
       "registerFirst": "Enregistrez d'abord votre {{provider}} avant de recharger.",
@@ -186,7 +205,8 @@
       "methodsLoadError": "Impossible de charger vos moyens de paiement.",
       "last4Required": "Saisissez exactement les 4 derniers chiffres de la carte.",
       "numberRequired": "Saisissez le numéro associé à ce compte.",
-      "methodSaveError": "Impossible d'enregistrer ce moyen de paiement."
+      "methodSaveError": "Impossible d'enregistrer ce moyen de paiement.",
+      "openPaymentPageError": "Impossible d'ouvrir la page de paiement. Réessayez."
     }
   },
   "transfer": {
@@ -309,7 +329,9 @@
       "regenerate": "Régénérer le code",
       "infoText": "Placez votre main devant la caméra et suivez les instructions pour générer votre code de paiement.",
       "launch": "Lancer l'enrôlement",
-      "error": "L'enrôlement a échoué."
+      "error": "L'enrôlement a échoué.",
+      "statusError": "Impossible de vérifier votre enrôlement pour le moment — votre code de paiement n'est probablement pas perdu, réessayez plutôt que de le régénérer.",
+      "retry": "Réessayer"
     }
   },
   "appLockGate": {

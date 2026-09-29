@@ -8,7 +8,7 @@ import Icon from '../components/Icon';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../api/notifications';
 import { ApiError } from '../api/client';
 import { enqueueMarkRead } from '../utils/offlineReadQueue';
-import { colors } from '../theme/colors';
+import { colors, notificationText } from '../theme/colors';
 import { formatDate } from '../utils/format';
 
 const TYPE_ICONS = {
@@ -116,6 +116,7 @@ export default function NotificationsScreen() {
           }
           renderItem={({ item }) => {
             const typeStyle = TYPE_ICONS[item.type] || { icon: 'bell', color: colors.turquoise };
+            const { titre, contenu } = notificationText(item, t);
             return (
               <Pressable onPress={() => onPressItem(item)}>
                 <Card style={[styles.row, !item.lu && styles.rowUnread]}>
@@ -126,9 +127,9 @@ export default function NotificationsScreen() {
                     <View style={{ flex: 1 }}>
                       <View style={styles.rowTop}>
                         {!item.lu ? <View style={styles.dot} /> : null}
-                        <Text style={styles.rowTitle}>{item.titre}</Text>
+                        <Text style={styles.rowTitle}>{titre}</Text>
                       </View>
-                      <Text style={styles.rowContent}>{item.contenu}</Text>
+                      <Text style={styles.rowContent}>{contenu}</Text>
                       <Text style={styles.rowDate}>{formatDate(item.date_creation || item.date_envoi)}</Text>
                     </View>
                   </View>

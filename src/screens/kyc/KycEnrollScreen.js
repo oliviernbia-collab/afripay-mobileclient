@@ -14,18 +14,28 @@ export default function KycEnrollScreen({ navigation }) {
   const { t } = useTranslation();
   const [enrolled, setEnrolled] = useState(false);
   const [checking, setChecking] = useState(true);
+  // Distingue "confirmé non enrôlé" de "la vérification a échoué" (ex. backend injoignable
+  // pendant un redémarrage) — avaler l'erreur et retomber sur `enrolled=false` affichait à tort
+  // l'écran "vous devez vous enrôler", donnant l'impression qu'il fallait rescanner sa paume à
+  // chaque fois, alors que le gabarit était toujours valide côté serveur.
+  const [statusError, setStatusError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [palmCode, setPalmCode] = useState(null);
 
+  const checkStatus = useCallback(() => {
+    setChecking(true);
+    setStatusError(false);
+    getBiometricStatus()
+      .then((s) => setEnrolled(s.enrolled))
+      .catch(() => setStatusError(true))
+      .finally(() => setChecking(false));
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
-      setChecking(true);
-      getBiometricStatus()
-        .then((s) => setEnrolled(s.enrolled))
-        .catch(() => {})
-        .finally(() => setChecking(false));
-    }, [])
+      checkStatus();
+    }, [checkStatus])
   );
 
   // Capture une vraie photo de la paume (caméra native) puis l'envoie au backend, qui extrait et
@@ -62,6 +72,11 @@ export default function KycEnrollScreen({ navigation }) {
 
       {checking ? (
         <ActivityIndicator color={colors.white} style={{ marginTop: 30 }} />
+      ) : statusError ? (
+        <Card>
+          <Text style={styles.infoText}>{t('kyc.enroll.statusError')}</Text>
+          <GradientButton title={t('kyc.enroll.retry')} onPress={checkStatus} style={{ marginTop: 14 }} />
+        </Card>
       ) : enrolled ? (
         <Card style={styles.successCard}>
           <Text style={styles.successTitle}>{t('kyc.enroll.readyTitle')}</Text>

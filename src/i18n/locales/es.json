@@ -130,7 +130,9 @@
     "receivedFrom": "Recibido de {{name}}",
     "sentTo": "Enviado a {{name}}",
     "transferReceived": "Transferencia recibida",
-    "transferSent": "Transferencia enviada"
+    "transferSent": "Transferencia enviada",
+    "purchaseAt": "Compra en {{name}}",
+    "rechargeVia": "Recarga vía {{provider}}"
   },
   "historiqueDetail": {
     "typeLabel": "Tipo",
@@ -148,7 +150,8 @@
     "titleTransferReceived": "Transferencia recibida",
     "titleTransferSent": "Transferencia enviada",
     "counterpartyLabel": "Contacto",
-    "numberLabel": "Número"
+    "numberLabel": "Número",
+    "providerLabel": "Proveedor"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -158,6 +161,19 @@
     "emptyUnread": "No hay notificaciones sin leer.",
     "emptyAll": "No hay notificaciones.",
     "loadError": "No se pudieron cargar las notificaciones."
+  },
+  "notif": {
+    "welcome": { "title": "Bienvenido a AfriPay", "body": "Su cuenta ha sido creada. Complete su KYC para activar el pago con la palma." },
+    "transferReceived": { "title": "Transferencia recibida", "body": "Recibió {{montant}} FCFA en su cuenta AfriPay." },
+    "paymentRefused": { "title": "Pago rechazado", "body": "Intento de pago de {{montant}} FCFA rechazado: saldo insuficiente." },
+    "paymentAccepted": { "title": "Pago realizado", "body": "Pago de {{montant}} FCFA aceptado en {{marchand}}." },
+    "kycUpdate": {
+      "title": "Su expediente KYC ha sido actualizado",
+      "validated": "Su expediente KYC ha sido aprobado. El pago con la palma está activado.",
+      "other": "Su expediente KYC ha sido {{decision}}. {{motif}}"
+    },
+    "rechargeConfirmed": { "title": "Recarga confirmada", "body": "Su recarga de {{montant}} FCFA ha sido confirmada y añadida a su saldo." },
+    "rechargeFailed": { "title": "Recarga fallida", "body": "Su recarga de {{montant}} FCFA falló. No se debitó ningún monto." }
   },
   "recharge": {
     "title": "Recargar mi cuenta",
@@ -178,6 +194,9 @@
     "successTitle": "Recarga exitosa",
     "successAdded": "{{amount}} añadidos vía {{provider}}.",
     "successNewBalance": "Nuevo saldo: {{balance}}",
+    "pendingTitle": "Pago en curso",
+    "pendingText": "Complete el pago de {{amount}} en la página de {{provider}} que se acaba de abrir. Su saldo se actualizará en cuanto se confirme el pago.",
+    "reopenPaymentPage": "Reabrir la página de pago",
     "errors": {
       "chooseMethodRequired": "Elija un método de recarga.",
       "registerFirst": "Primero registre su {{provider}} antes de recargar.",
@@ -186,7 +205,8 @@
       "methodsLoadError": "No se pudieron cargar sus métodos de pago.",
       "last4Required": "Ingrese exactamente los últimos 4 dígitos de la tarjeta.",
       "numberRequired": "Ingrese el número asociado a esta cuenta.",
-      "methodSaveError": "No se pudo guardar este método de pago."
+      "methodSaveError": "No se pudo guardar este método de pago.",
+      "openPaymentPageError": "No se pudo abrir la página de pago. Inténtelo de nuevo."
     }
   },
   "transfer": {
@@ -309,7 +329,9 @@
       "regenerate": "Regenerar código",
       "infoText": "Coloque su mano frente a la cámara y siga las instrucciones para generar su código de pago.",
       "launch": "Iniciar registro",
-      "error": "El registro falló."
+      "error": "El registro falló.",
+      "statusError": "No se pudo verificar su registro en este momento — su código de pago probablemente no se ha perdido, reinténtelo en lugar de regenerarlo.",
+      "retry": "Reintentar"
     }
   },
   "appLockGate": {
