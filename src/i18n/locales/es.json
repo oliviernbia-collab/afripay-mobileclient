@@ -158,8 +158,13 @@
     "markAllRead": "Marcar todo leído",
     "tabAll": "Todas",
     "tabUnread": "No leídas",
+    "periodAll": "Todo el período",
+    "periodToday": "Hoy",
+    "periodLast7": "Últimos 7 días",
+    "periodThisMonth": "Este mes",
     "emptyUnread": "No hay notificaciones sin leer.",
     "emptyAll": "No hay notificaciones.",
+    "emptyFiltered": "No hay notificaciones en este período.",
     "loadError": "No se pudieron cargar las notificaciones."
   },
   "notif": {

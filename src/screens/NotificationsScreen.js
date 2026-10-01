@@ -17,18 +17,46 @@ const TYPE_ICONS = {
   système: { icon: 'circle-info', color: colors.blue },
 };
 
+// Même logique que HistoriqueScreen.js periodRange() — plages calculées côté client, envoyées en
+// dateDebut/dateFin (désormais supportés par GET /notifications, voir backend/src/services/
+// notificationService.js).
+function periodRange(key) {
+  if (!key) return {};
+  const now = new Date();
+  const toDateStr = (d) => d.toISOString().slice(0, 10);
+  if (key === 'jour') return { dateDebut: toDateStr(now), dateFin: toDateStr(now) };
+  if (key === '7j') {
+    const start = new Date(now);
+    start.setDate(start.getDate() - 6);
+    return { dateDebut: toDateStr(start), dateFin: toDateStr(now) };
+  }
+  if (key === 'mois') {
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    return { dateDebut: toDateStr(start), dateFin: toDateStr(now) };
+  }
+  return {};
+}
+
+const PERIOD_CHIPS = [
+  { key: undefined, labelKey: 'notifications.periodAll' },
+  { key: 'jour', labelKey: 'notifications.periodToday' },
+  { key: '7j', labelKey: 'notifications.periodLast7' },
+  { key: 'mois', labelKey: 'notifications.periodThisMonth' },
+];
+
 export default function NotificationsScreen() {
   const { t, i18n } = useTranslation();
   const [items, setItems] = useState([]);
   const [tab, setTab] = useState('toutes');
+  const [period, setPeriod] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (periodKey) => {
     setError('');
     try {
-      const data = await getNotifications();
+      const data = await getNotifications({ ...periodRange(periodKey), limit: 100 });
       setItems(data);
     } catch (e) {
       setError(e.message || t('notifications.loadError'));
@@ -38,13 +66,14 @@ export default function NotificationsScreen() {
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      load().finally(() => setLoading(false));
-    }, [load])
+      load(period).finally(() => setLoading(false));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [period])
   );
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await load();
+    await load(period);
     setRefreshing(false);
   };
 
@@ -99,6 +128,18 @@ export default function NotificationsScreen() {
         ))}
       </View>
 
+      <View style={styles.chipsRow}>
+        {PERIOD_CHIPS.map((c) => (
+          <Pressable
+            key={c.labelKey}
+            onPress={() => setPeriod(c.key)}
+            style={[styles.chip, period === c.key && styles.chipActive]}
+          >
+            <Text style={[styles.chipText, period === c.key && styles.chipTextActive]}>{t(c.labelKey)}</Text>
+          </Pressable>
+        ))}
+      </View>
+
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       {loading ? (
@@ -116,7 +157,11 @@ export default function NotificationsScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.white} />}
           ListEmptyComponent={
             <Text style={styles.emptyText}>
-              {tab === 'non_lues' ? t('notifications.emptyUnread') : t('notifications.emptyAll')}
+              {period
+                ? t('notifications.emptyFiltered')
+                : tab === 'non_lues'
+                ? t('notifications.emptyUnread')
+                : t('notifications.emptyAll')}
             </Text>
           }
           renderItem={({ item }) => {
@@ -171,6 +216,17 @@ const styles = StyleSheet.create({
   tabActive: { backgroundColor: colors.blue, borderColor: colors.blue },
   tabText: { color: colors.textSecondary, fontSize: 12, fontWeight: '600' },
   tabTextActive: { color: colors.white },
+  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, marginBottom: 14, gap: 8 },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  chipActive: { backgroundColor: colors.turquoise, borderColor: colors.turquoise },
+  chipText: { color: colors.textSecondary, fontSize: 11.5, fontWeight: '600' },
+  chipTextActive: { color: colors.white },
   listContent: { paddingHorizontal: 20, paddingBottom: 30 },
   row: { marginBottom: 10 },
   rowUnread: { borderColor: colors.magenta },

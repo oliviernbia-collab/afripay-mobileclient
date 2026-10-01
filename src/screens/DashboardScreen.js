@@ -127,11 +127,11 @@ export default function DashboardScreen({ navigation }) {
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-        <Card style={styles.balanceCard}>
+        <View style={styles.balanceCard}>
           <View style={styles.balanceHeaderRow}>
             <Text style={styles.balanceLabel}>{t('dashboard.balanceLabel')}</Text>
             <Pressable onPress={() => setBalanceHidden((v) => !v)} hitSlop={10}>
-              <Icon name={balanceHidden ? 'eye-slash' : 'eye'} size={16} color={colors.textSecondary} />
+              <Icon name={balanceHidden ? 'eye-slash' : 'eye'} size={16} color="rgba(255, 255, 255, 0.85)" />
             </Pressable>
           </View>
           <Text style={styles.balanceValue}>
@@ -154,10 +154,11 @@ export default function DashboardScreen({ navigation }) {
                     : t('dashboard.kycStatusPrefix', { status: kycStatusLabel(kyc.statutKyc, t).toLowerCase() })
                 }
                 color={kycStatusColor(kyc.statutKyc)}
+                onColorBg
               />
             </View>
           ) : null}
-        </Card>
+        </View>
 
         {showKycBanner ? (
           <Pressable onPress={() => navigation.navigate('KycHome')}>
@@ -253,9 +254,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  balanceCard: { marginBottom: 16 },
+  balanceCard: {
+    marginBottom: 16,
+    borderRadius: 28,
+    backgroundColor: colors.turquoise,
+    padding: 20,
+    shadowColor: colors.turquoise,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.35,
+    shadowRadius: 20,
+    elevation: 10,
+  },
   balanceHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  balanceLabel: { color: colors.textSecondary, fontSize: 13 },
+  balanceLabel: { color: 'rgba(255, 255, 255, 0.85)', fontSize: 13 },
   balanceValue: { color: colors.white, fontSize: 32, fontWeight: '800', marginTop: 6 },
   offlineRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
   offlineText: { color: colors.gold, fontSize: 11.5, fontWeight: '600' },

@@ -158,8 +158,13 @@
     "markAllRead": "Mark all read",
     "tabAll": "All",
     "tabUnread": "Unread",
+    "periodAll": "All time",
+    "periodToday": "Today",
+    "periodLast7": "Last 7 days",
+    "periodThisMonth": "This month",
     "emptyUnread": "No unread notifications.",
     "emptyAll": "No notifications.",
+    "emptyFiltered": "No notifications for this period.",
     "loadError": "Unable to load notifications."
   },
   "notif": {
