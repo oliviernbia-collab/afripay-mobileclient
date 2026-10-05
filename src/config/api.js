@@ -20,7 +20,7 @@
  * that's the primary way this app is tested (physical device + Expo Go).
  */
 
-const LAN_IP = '192.168.1.150';
+const LAN_IP = '192.168.1.30';
 const PORT = 4000;
 
 const MODE = 'lan'; // 'lan' | 'android-emulator' | 'ios-simulator'

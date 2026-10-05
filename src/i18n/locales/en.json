@@ -192,6 +192,8 @@
     "phonePlaceholder": "e.g. 0102030405",
     "amountLabel": "Amount (FCFA)",
     "amountPlaceholder": "e.g. 5000",
+    "feePreviewFees": "AfriPay fee ({{taux}})",
+    "feePreviewCredited": "You will receive",
     "submit": "Top up",
     "capTitle": "Top-up cap reached",
     "capText": "Until your KYC is approved, your cumulative top-ups are limited to 10,000 FCFA. Complete your KYC to lift this cap.",
@@ -235,7 +237,12 @@
     }
   },
   "support": {
-    "title": "Get help",
+    "greeting": "Hello 👋",
+    "title": "How can we help you?",
+    "sendMessageLabel": "Send us a message",
+    "searchPlaceholder": "Find an answer",
+    "noResultsTitle": "No results",
+    "noResultsText": "Try another keyword, or send us a message directly.",
     "faqSectionLabel": "Frequently asked questions",
     "faq": [
       {

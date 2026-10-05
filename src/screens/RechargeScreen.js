@@ -10,6 +10,7 @@ import Icon from '../components/Icon';
 import IconRow from '../components/IconRow';
 import {
   getProviders,
+  getFraisRecharge,
   recharge,
   getMyPaymentMethods,
   addPaymentMethod,
@@ -30,6 +31,7 @@ function maskMethod(fournisseur, identifiant) {
 export default function RechargeScreen({ navigation }) {
   const { t } = useTranslation();
   const [providers, setProviders] = useState([]);
+  const [tauxFrais, setTauxFrais] = useState(null);
   const [selected, setSelected] = useState(null);
   const [montant, setMontant] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,6 +51,11 @@ export default function RechargeScreen({ navigation }) {
     getProviders()
       .then(setProviders)
       .catch(() => setProviders(['wave', 'orange_money', 'moov_money', 'mtn_money', 'djamo', 'visa']));
+    // Taux affiché dans l'aperçu de frais ci-dessous — silencieux si indisponible (l'aperçu ne
+    // s'affiche alors simplement pas, la recharge elle-même n'en dépend pas).
+    getFraisRecharge()
+      .then((data) => setTauxFrais(Number(data?.taux)))
+      .catch(() => {});
   }, []);
 
   const loadMethods = useCallback(
@@ -123,9 +130,9 @@ export default function RechargeScreen({ navigation }) {
       const result = await recharge(selected, amount, selectedMethodId);
       setSuccess(result);
       setMontant('');
-      // Le paiement se termine sur une page MoneyFusion hébergée (choix de l'opérateur, saisie du
-      // code Mobile Money) — le wallet n'est crédité qu'une fois le paiement confirmé (webhook),
-      // pas à cet instant. On ouvre donc cette page plutôt que d'afficher un nouveau solde.
+      // Le paiement se termine sur une page Jèko hébergée (saisie du code Mobile Money pour
+      // l'opérateur déjà choisi) — le wallet n'est crédité qu'une fois le paiement confirmé
+      // (webhook), pas à cet instant. On ouvre donc cette page plutôt que d'afficher un nouveau solde.
       if (result.paymentUrl) {
         Linking.openURL(result.paymentUrl).catch(() => {
           setError(t('recharge.errors.openPaymentPageError'));
@@ -143,6 +150,14 @@ export default function RechargeScreen({ navigation }) {
   };
 
   const isCard = CARD_PROVIDERS.includes(selected);
+
+  // Aperçu avant confirmation : le client paie `montantSaisi` (envoyé tel quel à Jèko), mais seul
+  // montant - frais est crédité au wallet AfriPay (voir backend rechargeService.confirmerPayin) —
+  // Number.isFinite(tauxFrais) évite d'afficher un aperçu tant que /recharges/frais n'a pas répondu.
+  const montantSaisi = Number(montant);
+  const previewActif = Number.isFinite(tauxFrais) && Number.isFinite(montantSaisi) && montantSaisi > 0;
+  const fraisPreview = previewActif ? Math.round(montantSaisi * tauxFrais) : 0;
+  const creditPreview = previewActif ? montantSaisi - fraisPreview : 0;
 
   return (
     <ScreenContainer scroll>
@@ -270,6 +285,21 @@ export default function RechargeScreen({ navigation }) {
         style={{ marginTop: 8 }}
       />
 
+      {previewActif ? (
+        <Card style={styles.feePreviewCard}>
+          <View style={styles.feePreviewRow}>
+            <Text style={styles.feePreviewLabel}>
+              {t('recharge.feePreviewFees', { taux: `${Math.round(tauxFrais * 1000) / 10}%` })}
+            </Text>
+            <Text style={styles.feePreviewValue}>-{formatFcfa(fraisPreview)}</Text>
+          </View>
+          <View style={styles.feePreviewRow}>
+            <Text style={styles.feePreviewLabelStrong}>{t('recharge.feePreviewCredited')}</Text>
+            <Text style={styles.feePreviewValueStrong}>{formatFcfa(creditPreview)}</Text>
+          </View>
+        </Card>
+      ) : null}
+
       <GradientButton title={t('recharge.submit')} onPress={onSubmit} loading={loading} style={{ marginTop: 8 }} />
     </ScreenContainer>
   );
@@ -295,4 +325,10 @@ const styles = StyleSheet.create({
   addCardActions: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 },
   cancelAddBtn: { paddingVertical: 14, paddingHorizontal: 4 },
   cancelAddText: { color: colors.textSecondary, fontWeight: '600', fontSize: 13 },
+  feePreviewCard: { marginTop: 10, gap: 6 },
+  feePreviewRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  feePreviewLabel: { color: colors.textSecondary, fontSize: 13 },
+  feePreviewValue: { color: colors.textSecondary, fontSize: 13 },
+  feePreviewLabelStrong: { color: colors.white, fontSize: 14, fontWeight: '700' },
+  feePreviewValueStrong: { color: colors.white, fontSize: 14, fontWeight: '700' },
 });

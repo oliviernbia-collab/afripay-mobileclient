@@ -192,6 +192,8 @@
     "phonePlaceholder": "Ej: 0102030405",
     "amountLabel": "Monto (FCFA)",
     "amountPlaceholder": "Ej: 5000",
+    "feePreviewFees": "Comisión AfriPay ({{taux}})",
+    "feePreviewCredited": "Usted recibirá",
     "submit": "Recargar",
     "capTitle": "Límite de recarga alcanzado",
     "capText": "Mientras su KYC no esté aprobado, sus recargas acumuladas están limitadas a 10.000 FCFA. Complete su KYC para levantar este límite.",
@@ -235,7 +237,12 @@
     }
   },
   "support": {
-    "title": "Obtener ayuda",
+    "greeting": "Hola 👋",
+    "title": "¿Cómo podemos ayudarle?",
+    "sendMessageLabel": "Envíenos un mensaje",
+    "searchPlaceholder": "Buscar una respuesta",
+    "noResultsTitle": "Sin resultados",
+    "noResultsText": "Pruebe con otra palabra clave, o envíenos un mensaje directamente.",
     "faqSectionLabel": "Preguntas frecuentes",
     "faq": [
       {

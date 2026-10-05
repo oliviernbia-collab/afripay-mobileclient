@@ -2,6 +2,10 @@ import { get, post, del } from './client';
 
 export const getProviders = () => get('/recharges/fournisseurs', { auth: false });
 
+// Taux de frais AfriPay sur la recharge (voir backend/src/services/rechargeService.js) — pour
+// afficher un aperçu ("vous recevrez X") avant confirmation, sans dupliquer la valeur en dur ici.
+export const getFraisRecharge = () => get('/recharges/frais');
+
 export const recharge = (fournisseur, montant, moyenPaiementId) =>
   post('/recharges', { fournisseur, montant, moyenPaiementId });
 

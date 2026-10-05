@@ -192,6 +192,8 @@
     "phonePlaceholder": "Ex: 0102030405",
     "amountLabel": "Montant (FCFA)",
     "amountPlaceholder": "Ex: 5000",
+    "feePreviewFees": "Frais AfriPay ({{taux}})",
+    "feePreviewCredited": "Vous recevrez",
     "submit": "Recharger",
     "capTitle": "Plafond de recharge atteint",
     "capText": "Tant que votre KYC n'est pas validé, les recharges cumulées sont limitées à 10 000 FCFA. Complétez votre KYC pour lever ce plafond.",
@@ -235,7 +237,12 @@
     }
   },
   "support": {
-    "title": "Obtenir de l'aide",
+    "greeting": "Bonjour 👋",
+    "title": "Comment pouvons-nous vous aider ?",
+    "sendMessageLabel": "Envoyez-nous un message",
+    "searchPlaceholder": "Trouver une réponse",
+    "noResultsTitle": "Aucun résultat",
+    "noResultsText": "Essayez un autre mot-clé, ou envoyez-nous directement un message.",
     "faqSectionLabel": "Questions fréquentes",
     "faq": [
       {
