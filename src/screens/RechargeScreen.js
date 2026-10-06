@@ -202,6 +202,8 @@ export default function RechargeScreen({ navigation }) {
             key={p}
             icon={brand.icon}
             iconColor={brand.color}
+            image={brand.logo}
+            imageResizeMode={brand.imageResizeMode}
             label={providerLabel(p, t)}
             selected={selected === p}
             onPress={() => onSelectProvider(p)}

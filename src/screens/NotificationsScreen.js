@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,6 +8,8 @@ import Icon from '../components/Icon';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../api/notifications';
 import { ApiError } from '../api/client';
 import { enqueueMarkRead } from '../utils/offlineReadQueue';
+import { socket } from '../realtime/socket';
+import { useNotificationsBadge } from '../context/NotificationsContext';
 import { colors, notificationText } from '../theme/colors';
 import { formatDate } from '../utils/format';
 
@@ -46,6 +48,7 @@ const PERIOD_CHIPS = [
 
 export default function NotificationsScreen() {
   const { t, i18n } = useTranslation();
+  const { markSeen } = useNotificationsBadge();
   const [items, setItems] = useState([]);
   const [tab, setTab] = useState('toutes');
   const [period, setPeriod] = useState(undefined);
@@ -67,9 +70,24 @@ export default function NotificationsScreen() {
     useCallback(() => {
       setLoading(true);
       load(period).finally(() => setLoading(false));
+      markSeen();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [period])
   );
+
+  // Temps réel (voir backend/src/services/notificationService.js) : une notification qui arrive
+  // pendant que cet écran est déjà ouvert apparaît directement en tête de liste, sans attendre un
+  // refocus ou un tirer-pour-rafraîchir. Préfixée seulement si elle correspond au filtre période
+  // actif (vide = "toutes" -> toujours affichée) ; l'onglet "non lues" la montre déjà puisqu'elle
+  // arrive avec lu:0.
+  useEffect(() => {
+    const onNew = (notif) => {
+      setItems((prev) => [notif, ...prev]);
+      markSeen();
+    };
+    socket.on('notification:new', onNew);
+    return () => socket.off('notification:new', onNew);
+  }, [markSeen]);
 
   const onRefresh = async () => {
     setRefreshing(true);

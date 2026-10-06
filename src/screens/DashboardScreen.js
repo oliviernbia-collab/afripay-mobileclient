@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, Pressable, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,10 +11,12 @@ import TxTypeIcon from '../components/TxTypeIcon';
 import SideMenu from '../components/SideMenu';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useAuth } from '../context/AuthContext';
+import { useNotificationsBadge } from '../context/NotificationsContext';
 import { getMyWallet, getMyHistory } from '../api/wallet';
 import { getKycStatus } from '../api/kyc';
 import { getBiometricStatus } from '../api/biometrie';
 import { getCached, setCached } from '../utils/offlineCache';
+import { socket } from '../realtime/socket';
 import { colors, kycStatusColor, kycStatusLabel, statutColor, statutLabel, txDisplayTitle } from '../theme/colors';
 import { formatFcfa, formatDate } from '../utils/format';
 
@@ -30,6 +32,7 @@ const QUICK_ACTIONS = [
 export default function DashboardScreen({ navigation }) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
+  const { hasUnread } = useNotificationsBadge();
   const [wallet, setWallet] = useState(null);
   const [kyc, setKyc] = useState(null);
   const [enrolled, setEnrolled] = useState(null);
@@ -80,6 +83,16 @@ export default function DashboardScreen({ navigation }) {
     }, [load])
   );
 
+  // Temps réel (voir backend/src/realtime/socket.js) : dès qu'un webhook Jèko confirme une
+  // recharge/un retrait, ou qu'un virement arrive, le solde affiché se met à jour sans attendre
+  // que l'utilisateur quitte puis revienne sur cet écran (useFocusEffect ci-dessus) ou tire pour
+  // rafraîchir. On recharge tout `load()` plutôt que de corriger juste `wallet.solde` en local : la
+  // liste des transactions récentes doit elle aussi refléter la nouvelle transaction.
+  useEffect(() => {
+    socket.on('wallet:updated', load);
+    return () => socket.off('wallet:updated', load);
+  }, [load]);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await load();
@@ -122,6 +135,7 @@ export default function DashboardScreen({ navigation }) {
           <LanguageSwitcher />
           <Pressable onPress={() => navigation.navigate('Notifications')} style={styles.bell}>
             <Icon name="bell" size={18} color={colors.white} />
+            {hasUnread ? <View style={styles.bellDot} /> : null}
           </Pressable>
         </View>
 
@@ -239,6 +253,17 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  bellDot: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: colors.magenta,
+    borderWidth: 1.5,
+    borderColor: colors.card,
   },
   errorText: { color: colors.danger, marginBottom: 12 },
   greetingTextWrap: { flex: 1 },

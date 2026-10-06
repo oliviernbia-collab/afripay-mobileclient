@@ -5,6 +5,7 @@ import './src/i18n';
 import { LanguageProvider } from './src/context/LanguageContext';
 import { AuthProvider } from './src/context/AuthContext';
 import { ToastProvider } from './src/context/ToastContext';
+import { NotificationsProvider } from './src/context/NotificationsContext';
 import RootNavigator from './src/navigation/RootNavigator';
 import { initOfflineReadQueue } from './src/utils/offlineReadQueue';
 import { markNotificationRead } from './src/api/notifications';
@@ -21,10 +22,12 @@ export default function App() {
     <SafeAreaProvider>
       <LanguageProvider>
         <AuthProvider>
-          <ToastProvider>
-            <StatusBar style="light" />
-            <RootNavigator />
-          </ToastProvider>
+          <NotificationsProvider>
+            <ToastProvider>
+              <StatusBar style="light" />
+              <RootNavigator />
+            </ToastProvider>
+          </NotificationsProvider>
         </AuthProvider>
       </LanguageProvider>
     </SafeAreaProvider>

@@ -3,6 +3,7 @@ import { getAccessToken, saveTokens, clearTokens } from '../api/tokenStore';
 import { setUnauthorizedHandler } from '../api/client';
 import * as authApi from '../api/auth';
 import { useLanguage } from './LanguageContext';
+import { connectRealtime, disconnectRealtime } from '../realtime/socket';
 
 const AuthContext = createContext(null);
 
@@ -32,6 +33,14 @@ export function AuthProvider({ children }) {
       setUser(null);
     });
   }, []);
+
+  // Connexion temps réel (voir realtime/socket.js) dérivée d'un seul endroit de l'état `user`
+  // plutôt que dispatchée à chaque site qui fait setUser(...) (login/register/restauration au
+  // démarrage/déconnexion forcée) : un seul effet ne peut pas en oublier un.
+  useEffect(() => {
+    if (user) connectRealtime();
+    else disconnectRealtime();
+  }, [user]);
 
   // On app start: if we have a stored token, validate it via /auth/me.
   useEffect(() => {

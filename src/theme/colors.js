@@ -48,13 +48,23 @@ export const kycStatusLabel = (statut, t) => t(`status.kyc.${statut}`, { default
 
 export const statutLabel = (statut, t) => t(`status.tx.${statut}`, { defaultValue: statut || '—' });
 
+// `icon`/`color` restent le repli FontAwesome (utilisé si `logo` est absent) ; `logo` est le vrai
+// logo de marque (icône d'app officielle récupérée depuis le Play Store de chaque fournisseur, ou
+// le logo Visa officiel — voir assets/providers/) affiché à la place dans IconRow. `imageResizeMode`
+// à 'contain' pour Visa : c'est un simple mot-symbole (wordmark) sans fond, pas une icône carrée
+// comme les autres — 'cover' le découperait.
 export const providerBrand = {
-  wave: { color: '#1DC8E3', icon: 'droplet' },
-  orange_money: { color: '#F7941D', icon: 'mobile-screen' },
-  moov_money: { color: '#27AAE1', icon: 'tower-cell' },
-  mtn_money: { color: '#FFC20E', icon: 'sim-card' },
-  djamo: { color: '#7C3AED', icon: 'wallet' },
-  visa: { color: '#1A1F71', icon: 'credit-card' },
+  wave: { color: '#1DC8E3', icon: 'droplet', logo: require('../../assets/providers/wave.png') },
+  orange_money: { color: '#F7941D', icon: 'mobile-screen', logo: require('../../assets/providers/orange_money.png') },
+  moov_money: { color: '#27AAE1', icon: 'tower-cell', logo: require('../../assets/providers/moov_money.png') },
+  mtn_money: { color: '#FFC20E', icon: 'sim-card', logo: require('../../assets/providers/mtn_money.png') },
+  djamo: { color: '#7C3AED', icon: 'wallet', logo: require('../../assets/providers/djamo.jpg') },
+  visa: {
+    color: '#1A1F71',
+    icon: 'credit-card',
+    logo: require('../../assets/providers/visa.png'),
+    imageResizeMode: 'contain',
+  },
 };
 
 export const providerLabel = (key, t) => t(`providers.${key}`, { defaultValue: key });
