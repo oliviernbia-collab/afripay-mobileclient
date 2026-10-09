@@ -23,7 +23,7 @@ const SIZES = {
   icon: { width: 34, height: 29 },
 };
 
-export default function BrandHeader({ size = 'large', showTagline = true, style }) {
+export default function BrandHeader({ size = 'large', showTagline = true, scale = 1, style }) {
   const { t } = useTranslation();
   const { width: logoWidth, height: logoHeight } = SIZES[size] || SIZES.large;
   const source = size === 'large' ? LOGO_MAIN : LOGO_COMPACT;
@@ -32,7 +32,7 @@ export default function BrandHeader({ size = 'large', showTagline = true, style 
     <View style={[styles.container, style]}>
       <Image
         source={source}
-        style={{ width: logoWidth, height: logoHeight }}
+        style={{ width: logoWidth * scale, height: logoHeight * scale }}
         resizeMode="contain"
         accessibilityLabel="AfriPay"
       />

@@ -42,8 +42,8 @@ export default function LoginScreen({ navigation }) {
         <LanguageSwitcher />
       </View>
 
-      <View style={{ alignItems: 'center', marginTop: 4, marginBottom: 16 }}>
-        <BrandHeader size="large" />
+      <View style={{ alignItems: 'center', marginTop: -8, marginBottom: 12 }}>
+        <BrandHeader size="large" scale={0.82} />
       </View>
 
       <Text style={styles.title}>{t('auth.login.title')}</Text>

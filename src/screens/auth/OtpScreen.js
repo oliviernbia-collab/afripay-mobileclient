@@ -26,7 +26,7 @@ export default function OtpScreen({ route, navigation }) {
       <Text style={styles.title}>{t('auth.otp.title')}</Text>
       <Text style={styles.subtitle}>{t('auth.otp.subtitle', { phone: telephone })}</Text>
 
-      {devCode ? (
+      {__DEV__ && devCode ? (
         <View style={styles.devHint}>
           <Text style={styles.devHintTitle}>{t('auth.otp.devModeTitle')}</Text>
           <Text style={styles.devHintText}>
