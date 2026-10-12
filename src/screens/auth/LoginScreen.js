@@ -42,8 +42,8 @@ export default function LoginScreen({ navigation }) {
         <LanguageSwitcher />
       </View>
 
-      <View style={{ alignItems: 'center', marginTop: -8, marginBottom: 12 }}>
-        <BrandHeader size="large" scale={0.82} />
+      <View style={styles.header}>
+        <BrandHeader size="large" scale={0.58} circle />
       </View>
 
       <Text style={styles.title}>{t('auth.login.title')}</Text>
@@ -84,6 +84,7 @@ export default function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   langRow: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 2 },
+  header: { alignItems: 'center', marginTop: 4, marginBottom: 14 },
   title: { color: colors.white, fontSize: 22, fontWeight: '700', marginTop: 4, marginBottom: 14 },
   formCard: { borderRadius: radius.xl },
   forgotLink: { alignSelf: 'flex-end', marginTop: 10 },

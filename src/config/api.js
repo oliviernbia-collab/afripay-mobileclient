@@ -6,7 +6,7 @@
  *
  *  1) Physical phone via Expo Go on the same Wi-Fi as this computer (the
  *     normal way to test this app) -> use this computer's LAN IP.
- *     This machine's LAN IP is 192.168.1.30, so we default to that.
+ *     This machine's LAN IP is 192.168.1.82, so we default to that.
  *     If your computer's IP is different, either edit LAN_IP below or run
  *     `ipconfig` (Windows) / `ifconfig` (Mac/Linux) to find yours.
  *
@@ -28,7 +28,7 @@ const PORT = 4000;
 // retrouver, même en chaîne de caractères inerte, dans un binaire distribué.
 let DEV_HOST;
 if (__DEV__) {
-  const LAN_IP = '192.168.1.30';
+  const LAN_IP = '192.168.1.82';
   const MODE = 'lan'; // 'lan' | 'android-emulator' | 'ios-simulator'
   const HOSTS = {
     lan: LAN_IP,
